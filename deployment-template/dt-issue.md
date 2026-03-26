@@ -274,8 +274,8 @@ See the `byoc/` folder for a complete working example.
 
 ```
 deployment-template-demo/
-├── summary.md                          ← This file
-├── deployment-template/                ← DT-based flow (FAILS)
+├── deployment-template/
+│   ├── dt-issue.md                     ← This file
 │   ├── configs/e2e-config.sh
 │   ├── docs/deployment-templates-intro.md
 │   └── scripts/
@@ -310,6 +310,7 @@ deployment-template-demo/
 │       └── rest_deploy.py              ← REST API deploy (also fails)
 ├── byoc/                               ← BYOC flow (WORKS)
 │   ├── config.sh
+│   ├── byoc-walkthrough.md             ← Step-by-step BYOC commands + outputs
 │   ├── yaml/
 │   │   ├── Dockerfile
 │   │   ├── environment.yml
