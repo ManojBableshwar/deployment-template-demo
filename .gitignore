@@ -1,0 +1,15 @@
+# Ignore downloaded model artifacts
+model-artifacts/
+
+# E2E run logs
+logs/
+byoc/logs/
+
+# Temporary working files
+tmp/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+nohup.out
