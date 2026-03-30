@@ -1,9 +1,9 @@
 $schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
 name: vllm-1gpu-h100
-version: 6
+version: 20
 description: "Generic vLLM deployment template for single-GPU models on H100"
-deployment_template_type: managedOnline
-environment: azureml://registries/mabables-reg-feb26/environments/vllm-qwen35/versions/11
+deployment_template_type: managed
+environment: azureml://registries/mabables-reg-feb26/environments/vllm-qwen35/versions/20
 default_instance_type: Standard_NC40ads_H100_v5
 allowed_instance_types: Standard_NC40ads_H100_v5
 instance_count: 1

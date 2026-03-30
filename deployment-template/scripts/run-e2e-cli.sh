@@ -70,7 +70,7 @@ for step_file in "${STEPS[@]}"; do
 
   START_TIME=$(date +%s)
 
-  if bash "$step_path" 2>&1 | tee "$log_file"; then
+  if bash -x "$step_path" 2>&1 | tee "$log_file"; then
     END_TIME=$(date +%s)
     DURATION=$((END_TIME - START_TIME))
     echo ""
@@ -83,7 +83,8 @@ for step_file in "${STEPS[@]}"; do
     echo "[FAIL] $step_name failed after ${DURATION}s — see $log_file"
     FAILED=$((FAILED + 1))
     FAILED_STEPS+=("$step_name")
-    # Continue to next step even on failure so partial results are captured
+    echo "[ABORT] Stopping pipeline — downstream steps depend on $step_name."
+    break
   fi
   echo ""
 done

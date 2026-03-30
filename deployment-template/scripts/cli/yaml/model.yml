@@ -1,9 +1,9 @@
 $schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
 name: Qwen35-08B
-version: 13
+version: 20
 path: ../../../../model-artifacts
 type: custom_model
-description: "Qwen3.5-0.8B with deployment template v6"
+description: "Qwen3.5-0.8B with deployment template v20"
 tags:
   source: huggingface
   hf_model_id: Qwen/Qwen3.5-0.8B
@@ -11,4 +11,4 @@ tags:
   framework: transformers
   architecture: qwen3_5
 default_deployment_template:
-  asset_id: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-1gpu-h100/versions/6
+  asset_id: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-1gpu-h100/versions/20
