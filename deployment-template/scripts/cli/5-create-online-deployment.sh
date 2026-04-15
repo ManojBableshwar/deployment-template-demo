@@ -7,9 +7,10 @@ source "$SCRIPT_DIR/../env.sh"
 info() { printf '\033[1;34m[INFO]\033[0m  %s\n' "$*"; }
 
 az account set --subscription "$SUBSCRIPTION_ID"
+_step_start "Step 5: Create online deployment"
 
 # Check if deployment already exists
-if az ml online-deployment show --name "$DEPLOYMENT_NAME" --endpoint-name "$ENDPOINT_NAME" --workspace-name "$AZUREML_WORKSPACE" --resource-group "$RESOURCE_GROUP" -o none 2>/dev/null; then
+if az ml online-deployment show --name "$DEPLOYMENT_NAME" --endpoint-name "$ENDPOINT_NAME" --workspace-name "$AZUREML_WORKSPACE" --resource-group "$RESOURCE_GROUP" 2>&1; then
   info "Deployment '$DEPLOYMENT_NAME' already exists — skipping creation."
 else
   info "Creating online deployment '$DEPLOYMENT_NAME' under endpoint '$ENDPOINT_NAME'…"
@@ -28,3 +29,5 @@ az ml online-deployment show \
   --workspace-name "$AZUREML_WORKSPACE" \
   --resource-group "$RESOURCE_GROUP" \
   -o json
+
+_step_end

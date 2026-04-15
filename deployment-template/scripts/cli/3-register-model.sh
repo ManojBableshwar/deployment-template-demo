@@ -12,12 +12,13 @@ source "$SCRIPT_DIR/../env.sh"
 info() { printf '\033[1;34m[INFO]\033[0m  %s\n' "$*"; }
 
 az account set --subscription "$SUBSCRIPTION_ID"
+_step_start "Step 3: Register model"
 
 MODEL_DIR="$ROOT_DIR/model-artifacts"
 
 # Check if model already exists in registry
 if az ml model show --name "$MODEL_NAME" --version "$MODEL_VERSION" \
-     --registry-name "$AZUREML_REGISTRY" -o none 2>/dev/null; then
+     --registry-name "$AZUREML_REGISTRY" 2>&1; then
   info "Model '$MODEL_NAME' v$MODEL_VERSION already exists in registry — skipping."
 else
   # Download model from HuggingFace (skip if already present)
@@ -50,3 +51,5 @@ az ml model show \
   --version "$MODEL_VERSION" \
   --registry-name "$AZUREML_REGISTRY" \
   -o json
+
+_step_end

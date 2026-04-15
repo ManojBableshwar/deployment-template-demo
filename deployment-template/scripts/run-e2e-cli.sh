@@ -33,6 +33,7 @@ echo "[PRE-CHECK] Logged in as: $(az account show --query user.name -o tsv)"
 
 # ── Create log directory ────────────────────────────────────────────────────
 TIMESTAMP="$(date +%Y-%m-%d_%H-%M-%S)"
+PIPELINE_START=$(date +%s)
 LOG_DIR="$ROOT_DIR/logs/cli/$TIMESTAMP"
 mkdir -p "$LOG_DIR"
 echo "[INFO] Logs will be written to: $LOG_DIR"
@@ -51,6 +52,7 @@ STEPS=(
 PASSED=0
 FAILED=0
 FAILED_STEPS=()
+STEP_TIMINGS=()
 
 for step_file in "${STEPS[@]}"; do
   step_path="$SCRIPT_DIR/cli/$step_file"
@@ -73,14 +75,20 @@ for step_file in "${STEPS[@]}"; do
   if bash -x "$step_path" 2>&1 | tee "$log_file"; then
     END_TIME=$(date +%s)
     DURATION=$((END_TIME - START_TIME))
+    MINS=$((DURATION / 60))
+    SECS=$((DURATION % 60))
     echo ""
-    echo "[PASS] $step_name completed in ${DURATION}s"
+    echo "[PASS] $step_name completed in ${MINS}m ${SECS}s (${DURATION}s)"
+    STEP_TIMINGS+=("$step_name: ${MINS}m ${SECS}s  [PASS]")
     PASSED=$((PASSED + 1))
   else
     END_TIME=$(date +%s)
     DURATION=$((END_TIME - START_TIME))
+    MINS=$((DURATION / 60))
+    SECS=$((DURATION % 60))
     echo ""
-    echo "[FAIL] $step_name failed after ${DURATION}s — see $log_file"
+    echo "[FAIL] $step_name failed after ${MINS}m ${SECS}s — see $log_file"
+    STEP_TIMINGS+=("$step_name: ${MINS}m ${SECS}s  [FAIL]")
     FAILED=$((FAILED + 1))
     FAILED_STEPS+=("$step_name")
     echo "[ABORT] Stopping pipeline — downstream steps depend on $step_name."
@@ -90,14 +98,35 @@ for step_file in "${STEPS[@]}"; do
 done
 
 # ── Summary ──────────────────────────────────────────────────────────────────
-echo "======================================================================"
-echo "[SUMMARY] CLI E2E Run — $TIMESTAMP"
-echo "======================================================================"
-echo "  Passed: $PASSED / ${#STEPS[@]}"
-echo "  Failed: $FAILED / ${#STEPS[@]}"
+TOTAL_END=$(date +%s)
+TOTAL_DURATION=$((TOTAL_END - PIPELINE_START))
+TOTAL_MINS=$((TOTAL_DURATION / 60))
+TOTAL_SECS=$((TOTAL_DURATION % 60))
+
+SUMMARY="======================================================================
+[SUMMARY] CLI E2E Run — $TIMESTAMP
+======================================================================
+  Total time: ${TOTAL_MINS}m ${TOTAL_SECS}s
+  Passed: $PASSED / ${#STEPS[@]}
+  Failed: $FAILED / ${#STEPS[@]}"
+
 if [[ ${#FAILED_STEPS[@]} -gt 0 ]]; then
-  echo "  Failed steps: ${FAILED_STEPS[*]}"
+  SUMMARY+="
+  Failed steps: ${FAILED_STEPS[*]}"
 fi
+
+SUMMARY+="
+----------------------------------------------------------------------
+  Step Timings:"
+for timing in "${STEP_TIMINGS[@]}"; do
+  SUMMARY+="
+    $timing"
+done
+SUMMARY+="
+======================================================================"
+
+echo "$SUMMARY"
+echo "$SUMMARY" > "$LOG_DIR/summary.txt"
 echo "  Logs:   $LOG_DIR"
 echo "======================================================================"
 

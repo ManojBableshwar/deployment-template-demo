@@ -22,17 +22,17 @@ export REGISTRY_LOCATION="eastus2"
 
 # ── Model ────────────────────────────────────────────────────────────────────
 export MODEL_NAME="Qwen35-08B"
-export MODEL_VERSION="20"
+export MODEL_VERSION="21"
 export HF_MODEL_ID="Qwen/Qwen3.5-0.8B"
 
 # ── Environment ──────────────────────────────────────────────────────────────────
 export ENVIRONMENT_NAME="vllm-qwen35"
-export ENVIRONMENT_VERSION="20"
+export ENVIRONMENT_VERSION="21"
 export VLLM_IMAGE="vllm/vllm-openai:latest"
 
 # ── Deployment Template ──────────────────────────────────────────────────────
 export TEMPLATE_NAME="vllm-1gpu-h100"
-export TEMPLATE_VERSION="20"
+export TEMPLATE_VERSION="21"
 
 # ── Online Endpoint & Deployment ─────────────────────────────────────────────
 export ENDPOINT_NAME="qwen35-endpoint"

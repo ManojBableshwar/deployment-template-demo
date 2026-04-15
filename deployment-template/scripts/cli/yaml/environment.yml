@@ -1,10 +1,10 @@
 $schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
 name: vllm-qwen35
-version: 20
+version: 21
 build:
   path: .
   dockerfile_path: Dockerfile
-description: "vLLM OpenAI-compatible inference server with runit + nginx for Azure ML managed endpoints"
+description: "vLLM OpenAI-compatible inference server with runit for Azure ML managed endpoints"
 tags:
   framework: vllm
   model_family: qwen3.5

@@ -5,6 +5,9 @@ model-artifacts/
 logs/
 byoc/logs/
 
+# Self-serve (separate workflow)
+self-serve/
+
 # Temporary working files
 tmp/
 

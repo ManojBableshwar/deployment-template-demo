@@ -37,8 +37,8 @@ export VLLM_IMAGE="${VLLM_IMAGE:-vllm/vllm-openai:latest}"
 export TEMPLATE_NAME="${TEMPLATE_NAME:-vllm-1gpu-h100}"
 export TEMPLATE_VERSION="${TEMPLATE_VERSION:-1}"
 
-export ENDPOINT_NAME="${ENDPOINT_NAME:-qwen35-endpoint}"
-export DEPLOYMENT_NAME="${DEPLOYMENT_NAME:-qwen35-vllm}"
+export ENDPOINT_NAME="${ENDPOINT_NAME:-qwen35-endpoint-dt}"
+export DEPLOYMENT_NAME="${DEPLOYMENT_NAME:-qwen35-vllm-dt}"
 
 export API_VERSION="${API_VERSION:-2024-10-01}"
 export API_VERSION_PREVIEW="${API_VERSION_PREVIEW:-2025-04-01-preview}"
@@ -46,3 +46,21 @@ export API_VERSION_PREVIEW="${API_VERSION_PREVIEW:-2025-04-01-preview}"
 # Helper: ARM base URLs
 export REGISTRY_BASE="https://management.azure.com/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/registries/${AZUREML_REGISTRY}"
 export WORKSPACE_BASE="https://management.azure.com/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/workspaces/${AZUREML_WORKSPACE}"
+
+# ── Timing helpers ───────────────────────────────────────────────────────────
+# Usage:
+#   _step_start "Description of operation"
+#   ... do work ...
+#   _step_end
+_STEP_START_EPOCH=""
+_step_start() {
+  _STEP_START_EPOCH=$(date +%s)
+  printf '\033[1;36m[START]\033[0m %s — %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
+}
+_step_end() {
+  local end_epoch=$(date +%s)
+  local elapsed=$(( end_epoch - _STEP_START_EPOCH ))
+  local mins=$(( elapsed / 60 ))
+  local secs=$(( elapsed % 60 ))
+  printf '\033[1;32m[DONE]\033[0m  %s — elapsed %dm %ds\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$mins" "$secs"
+}

@@ -1,16 +1,10 @@
-# Minimal deployment YAML — the deployment template (DT v6) linked to the model
+# Minimal deployment YAML — the deployment template (DT v21) linked to the model
 # provides: environment, probes, scoring port/path, env vars, request settings.
 # Only model, endpoint, and instance type are needed here.
-#
-# NOTE: As of March 2026, this deployment FAILS due to a service-side bug:
-#   CreatePresetDeploymentFlow → ModelRegistryClient.GetModelDeploymentSettingsAsync
-#   returns 404 (ModelPresetNotFound) for environments in custom registries.
-#   See summary.md in the repo root for full details.
+# NOTE: env vars set here are ignored when a DT is attached — set them in the DT instead.
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: qwen35-vllm
 endpoint_name: qwen35-endpoint
-model: azureml://registries/mabables-reg-feb26/models/Qwen35-08B/versions/20
+model: azureml://registries/mabables-reg-feb26/models/Qwen35-08B/versions/21
 instance_type: Standard_NC40ads_H100_v5
 instance_count: 1
-environment_variables:
-  VLLM_SERVED_MODEL_NAME: "Qwen3.5-0.8B"

@@ -7,6 +7,7 @@ source "$SCRIPT_DIR/../env.sh"
 info() { printf '\033[1;34m[INFO]\033[0m  %s\n' "$*"; }
 
 az account set --subscription "$SUBSCRIPTION_ID"
+_step_start "Step 6: Test inference"
 
 # Get scoring URI and key
 SCORING_URI=$(az ml online-endpoint show \
@@ -42,3 +43,5 @@ curl -s -X POST "${BASE_URL}/v1/chat/completions" \
 
 echo
 info "Test complete."
+
+_step_end
