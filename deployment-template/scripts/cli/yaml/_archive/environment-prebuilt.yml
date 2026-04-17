@@ -1,8 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
-name: vllm-qwen35
-version: 7
-image: vllm/vllm-openai:latest
-description: "vLLM OpenAI-compatible inference server (pre-built image)"
-tags:
-  framework: vllm
-  model_family: qwen3.5

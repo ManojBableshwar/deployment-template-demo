@@ -1,8 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
-name: vllm-qwen35
-version: 10
-image: c47421369908446eb3b9043f0033e4dc.azurecr.io/vllm-qwen35:v9
-description: "vLLM OpenAI-compatible inference server with runit + nginx for Azure ML managed endpoints"
-tags:
-  framework: vllm
-  model_family: qwen3.5

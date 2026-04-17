@@ -1,8 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
-name: Qwen35-08B
-version: 9
-path: /tmp/model-small
-type: custom_model
-description: Qwen3.5-0.8B with deployment template (tokenizer + config only)
-default_deployment_template:
-  asset_id: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-1gpu-h100/versions/3

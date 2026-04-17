@@ -1,0 +1,7 @@
+# Deployment YAML for H100 GPU
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: qwen35-vllm
+endpoint_name: qwen35-ep-h100
+model: azureml://registries/mabables-reg-feb26/models/Qwen35-08B/versions/50
+instance_type: Standard_NC40ads_H100_v5
+instance_count: 1
