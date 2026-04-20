@@ -1,0 +1,10 @@
+$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
+name: vllm-server
+version: 6
+build:
+  path: docker
+  dockerfile_path: Dockerfile
+description: "vLLM inference server (model-agnostic)"
+tags:
+  framework: vllm
+  base_image: vllm-openai

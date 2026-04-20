@@ -1,0 +1,14 @@
+$schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
+name: ${MODEL_NAME}
+version: ${MODEL_VERSION}
+path: ../../model-artifacts
+type: custom_model
+description: "${HF_MODEL_ID} with deployment template v${TEMPLATE_VERSION}"
+properties:
+  aotManifest: "True"
+tags:
+  source: huggingface
+  hf_model_id: ${HF_MODEL_ID}
+  framework: transformers
+default_deployment_template:
+  asset_id: azureml://registries/${AZUREML_REGISTRY}/deploymentTemplates/${TEMPLATE_NAME}/versions/${TEMPLATE_VERSION}

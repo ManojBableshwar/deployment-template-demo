@@ -1,0 +1,16 @@
+# Deployment YAML for A100 GPU
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: ${DEPLOYMENT_NAME}
+endpoint_name: ${ENDPOINT_NAME_A100}
+model: azureml://registries/${AZUREML_REGISTRY}/models/${MODEL_NAME}/versions/${MODEL_VERSION}
+instance_type: ${INSTANCE_TYPE_A100}
+instance_count: 1
+environment_variables:
+  VLLM_TENSOR_PARALLEL_SIZE: "${VLLM_TENSOR_PARALLEL_SIZE}"
+  VLLM_MAX_MODEL_LEN: "${VLLM_MAX_MODEL_LEN}"
+  VLLM_GPU_MEMORY_UTILIZATION: "${VLLM_GPU_MEMORY_UTILIZATION}"
+  VLLM_MAX_NUM_SEQS: "${VLLM_MAX_NUM_SEQS}"
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+  VLLM_NO_USAGE_STATS: "1"
+  HF_HOME: "/tmp/hf_cache"

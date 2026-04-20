@@ -1,7 +1,0 @@
-# Deployment YAML for A100 GPU
-$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
-name: qwen35-vllm
-endpoint_name: qwen35-ep-a100
-model: azureml://registries/mabables-reg-feb26/models/Qwen35-08B/versions/50
-instance_type: Standard_NC24ads_A100_v4
-instance_count: 1

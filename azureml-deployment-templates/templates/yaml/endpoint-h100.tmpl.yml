@@ -1,0 +1,4 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
+name: ${ENDPOINT_NAME_H100}
+auth_mode: key
+description: "Online endpoint for ${HF_MODEL_ID} on H100"

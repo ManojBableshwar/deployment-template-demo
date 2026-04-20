@@ -1,9 +1,11 @@
-# Ignore downloaded model artifacts
-model-artifacts/
+# Ignore downloaded model artifacts (any model under any deployment target)
+**/model-artifacts/
 
 # E2E run logs
-logs/
-byoc/logs/
+**/logs/
+
+# Generated YAML (hydrated from .tmpl.yml)
+**/deployment-template.yml
 
 # Self-serve (separate workflow)
 self-serve/

@@ -1,0 +1,4 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
+name: google--gemma-4-31b-it-h100
+auth_mode: key
+description: "Online endpoint for google/gemma-4-31B-it on H100"

@@ -1,0 +1,22 @@
+# llm-api-spec target config — hydrated per model by hydrate_yaml
+# API key is injected at runtime via --api-key flag (NOT stored here)
+targets:
+  - name: ${ENDPOINT_NAME_H100}
+    base_url: __BASE_URL_H100__
+    api_key: __API_KEY__
+    model: model
+    schemas:
+      - chat_completions
+    timeout: 120
+    headers:
+      Authorization: Bearer __API_KEY__
+
+  - name: ${ENDPOINT_NAME_A100}
+    base_url: __BASE_URL_A100__
+    api_key: __API_KEY__
+    model: model
+    schemas:
+      - chat_completions
+    timeout: 120
+    headers:
+      Authorization: Bearer __API_KEY__

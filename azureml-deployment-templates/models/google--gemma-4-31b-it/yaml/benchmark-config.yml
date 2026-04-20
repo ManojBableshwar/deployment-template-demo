@@ -1,0 +1,20 @@
+# Benchmark configuration for google--gemma-4-31b-it
+# Auto-hydrated by calc-vllm-config.sh during step 2 (create-deployment-template)
+#
+# This file is generated per-model so that step 7 (benchmark) always has the
+# correct concurrency levels, even on re-runs where step 2 is skipped.
+
+benchmark:
+  request_count: 100
+
+  # Concurrency levels derived from max_num_seqs (up to 2× to find saturation).
+  # Hydrated by calc-vllm-config.sh; falls back to safe defaults if not set.
+  concurrencies: [2, 4, 8, 16, 20, 30, 32]
+  max_num_seqs: 20
+
+  # Request shapes: [input_tokens, output_tokens, label]
+  token_configs:
+    - [200, 800, "short-gen"]
+    - [800, 200, "short-prompt"]
+    - [2000, 8000, "long-gen"]
+    - [8000, 2000, "long-prompt"]

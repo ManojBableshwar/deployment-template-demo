@@ -1,0 +1,14 @@
+$schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
+name: google--gemma-4-31b-it
+version: 6
+path: ../../model-artifacts
+type: custom_model
+description: "google/gemma-4-31B-it with deployment template v6"
+properties:
+  aotManifest: "True"
+tags:
+  source: huggingface
+  hf_model_id: google/gemma-4-31B-it
+  framework: transformers
+default_deployment_template:
+  asset_id: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/6
