@@ -93,7 +93,7 @@ Starting state: model v1 has DT v2 (set in test 3).
 TOKEN=$(az account get-access-token --query accessToken -o tsv)
 
 curl -sS -X PATCH \
-  "https://eastus2.api.azureml.ms/modelregistry/v1.0/subscriptions/75703df0-fbeb-4893-a1bb-cd2e0e5a04c4/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it:1" \
+  "https://eastus2.api.azureml.ms/modelregistry/v1.0/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it:1" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '[{
@@ -159,7 +159,7 @@ Starting state: model v1 has DT v1.
 
 ```bash
 TOKEN=$(az account get-access-token --query accessToken -o tsv)
-MODEL_URL="https://eastus2.api.azureml.ms/modelregistry/v1.0/subscriptions/75703df0-fbeb-4893-a1bb-cd2e0e5a04c4/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it:1"
+MODEL_URL="https://eastus2.api.azureml.ms/modelregistry/v1.0/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it:1"
 
 # Step 1: Remove existing DT
 curl -sS -X PATCH "$MODEL_URL" \
