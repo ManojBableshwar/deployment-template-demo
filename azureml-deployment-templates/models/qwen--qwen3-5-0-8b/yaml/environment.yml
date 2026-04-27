@@ -1,10 +1,10 @@
 $schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
-name: vllm-qwen--qwen3-5-0-8b
-version: 50
+name: vllm-server
+version: 62
 build:
   path: docker
   dockerfile_path: Dockerfile
-description: "vLLM inference server for Qwen/Qwen3.5-0.8B"
+description: "vLLM inference server (model-agnostic)"
 tags:
   framework: vllm
-  hf_model_id: Qwen/Qwen3.5-0.8B
+  base_image: vllm-openai

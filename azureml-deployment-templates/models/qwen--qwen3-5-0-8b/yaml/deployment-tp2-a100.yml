@@ -1,0 +1,10 @@
+# Deployment YAML for TP=2 on A100
+# Env vars are managed by the deployment template (DT), not here.
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: qwen--qwen3-5-0-8b-tp2-vllm
+endpoint_name: qwen--qwen3-5-0-8b-tp2-a100
+model: azureml://registries/mabables-reg-feb26/models/qwen--qwen3-5-0-8b/versions/62
+instance_type: Standard_NC48ads_A100_v4
+instance_count: 1
+properties:
+  azureml.deploymentTemplateOverride: "azureml://registries/mabables-reg-feb26/deploymenttemplates/vllm-qwen--qwen3-5-0-8b-tp2/versions/62"

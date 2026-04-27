@@ -1,0 +1,47 @@
+[08:26:32] Starting DT change bug repro — logs in /Users/mabables/CODE/REPOS/deployment-template-demo/bugs/repro-logs/2026-04-21_08-26-32
+────────────────────────────────────────────────────────
+[08:26:32] Verifying prerequisites...
+[08:26:36]   ✓ deployment-template show --name vllm-google--gemma-4-31b-it --version 1
+[08:26:39]   ✓ deployment-template show --name vllm-google--gemma-4-31b-it --version 2
+[08:26:42]   ✓ deployment-template show --name vllm-google--gemma-4-31b-it --version 3
+[08:26:46]   ✓ environment show --name vllm-server --version 1
+[08:26:49]   ✓ environment show --name vllm-server --version 2
+[08:26:53]   ✓ model show --name google--gemma-4-31b-it --version 1
+────────────────────────────────────────────────────────
+[08:26:53] Test 1: CLI set same DT (v1 → v1)
+[08:27:04]   Before: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/1
+[08:27:10]   Result: PASS (exit=0)
+────────────────────────────────────────────────────────
+[08:27:10] Test 2: CLI change DT (v1 → v3)
+[08:27:21]   Before: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/1
+[08:27:27]   Result: FAIL (exit=1)
+────────────────────────────────────────────────────────
+[08:27:27] Test 3: MFE PATCH add (none → v2)
+[08:27:35]   Before: (none)
+[08:27:36]   Result: PASS (HTTP 202, request-id=)
+────────────────────────────────────────────────────────
+[08:27:36] Test 4: MFE PATCH add (v2 → v3)
+[08:27:39]   Before: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/2
+[08:27:40]   Result: FAIL (HTTP 404, request-id=)
+────────────────────────────────────────────────────────
+[08:27:40] Test 5: MFE PATCH replace (v2 → v1)
+[08:27:43]   Before: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/2
+[08:27:44]   Result: FAIL (HTTP 404, request-id=)
+────────────────────────────────────────────────────────
+[08:27:44] Test 6: MFE PATCH remove (v2 → none)
+[08:27:47]   Before: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/2
+[08:27:49]   Result: PASS (HTTP 202, request-id=)
+────────────────────────────────────────────────────────
+[08:27:49] Test 7: Workaround remove+add (v1 → v2)
+[08:28:00]   Before: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/1
+[08:28:01]   7a remove: HTTP 202 (request-id=)
+[08:28:04]   7b add:    HTTP 202 (request-id=)
+[08:28:07]   After: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/2
+────────────────────────────────────────────────────────
+[08:28:07] Restoring model to DT v1...
+[08:28:18]   Final state: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/1
+────────────────────────────────────────────────────────
+[08:28:19] Done. Summary: 7/7 behaved as expected, 0 unexpected.
+[08:28:19] Logs: /Users/mabables/CODE/REPOS/deployment-template-demo/bugs/repro-logs/2026-04-21_08-26-32
+[08:28:19] Summary: /Users/mabables/CODE/REPOS/deployment-template-demo/bugs/repro-logs/2026-04-21_08-26-32/summary.md
+────────────────────────────────────────────────────────

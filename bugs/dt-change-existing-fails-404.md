@@ -1,5 +1,47 @@
 # Bug: Changing an existing defaultDeploymentTemplate on a model fails with 404
 
+## ✅ Verification — Fix confirmed (2026-04-27)
+
+Engineering confirmed the bug is fixed. Re-ran the full repro
+(`bugs/repro-dt-change-fails.sh`) against the original assets in
+`mabables-reg-feb26` (eastus2). **All 7 test cases now pass**, including the
+three previously-failing in-place DT change paths.
+
+**Environment**
+
+- Registry: `mabables-reg-feb26` (eastus2)
+- Subscription: `75703df0-38f9-4e2e-8328-45f6fc810286`
+- Model: `google--gemma-4-31b-it` v1
+- DT: `vllm-google--gemma-4-31b-it` v1, v2, v3 → env `vllm-server` v1, v2
+- CLI: `az` 2.83.0 / `ml` ext 2.42.0
+- Date: 2026-04-27 16:00 UTC
+- Logs: [bugs/repro-logs/2026-04-27_09-00-05/summary.md](repro-logs/2026-04-27_09-00-05/summary.md)
+
+**Re-test results**
+
+| # | Method | From DT | To DT | Previous | Current | HTTP/Exit | Correlation ID |
+|---|--------|---------|-------|----------|---------|-----------|----------------|
+| 1 | `az ml model update --set` | v1 | v1 (same) | OK | ✅ PASS | exit=0 | (see debug log) |
+| 2 | `az ml model update --set` | v1 | v3 | **FAIL** `Invalid containerUri` | ✅ **PASS** | exit=0 | (see debug log) |
+| 3 | MFE PATCH `op:"add"` | (none) | v2 | OK | ✅ PASS | 202 | `573d9c52-639c-4612-832b-7b467fe85de9` |
+| 4 | MFE PATCH `op:"add"` | v2 | v3 | **FAIL** 404 env not found | ✅ **PASS** | 202 | `96e833e8-9848-4215-9a43-786baaf9356b` |
+| 5 | MFE PATCH `op:"replace"` | v2 | v1 | **FAIL** 404 env not found | ✅ **PASS** | 202 | `5101e7e1-0533-41e9-98e6-7183697ef5fd` |
+| 6 | MFE PATCH `op:"remove"` | v2 | (none) | OK | ✅ PASS | 202 | `8e9f0055-5ad7-4768-a674-52f37dac2606` |
+| 7 | MFE PATCH `op:"remove"` → `op:"add"` (workaround) | v1 | v2 | OK | ✅ PASS | 202 / 202 | `dcf8a994…` / `100fdefb…` |
+
+**Result**: 7/7 pass. Tests 2, 4, and 5 — the previously-broken in-place change
+paths — now succeed and the model's `default_deployment_template.asset_id`
+reflects the new value (verified via `az ml model show`). The two-step
+remove-then-add workaround is no longer necessary.
+
+> **Note on script output**: The "Notes" column and "Failed request details"
+> section in the auto-generated `summary.md` still label tests 2/4/5 as
+> "**BUG**" / "Failed request details" — that text is hard-coded in
+> `repro-dt-change-fails.sh` from when the bug was active. The actual results
+> (HTTP status 202, exit code 0) confirm the fix.
+
+---
+
 ## Summary
 
 When a model in a **registry** already has a `defaultDeploymentTemplate` (DT)

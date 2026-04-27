@@ -1,0 +1,43 @@
+$schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json
+name: vllm-qwen--qwen3-5-0-8b-tp1
+version: 62
+description: "vLLM deployment template for Qwen/Qwen3.5-0.8B"
+deployment_template_type: managed
+environment: azureml://registries/mabables-reg-feb26/environments/vllm-server/versions/62
+default_instance_type: Standard_NC24ads_A100_v4
+allowed_instance_types: "Standard_NC24ads_A100_v4 Standard_NC40ads_H100_v5 Standard_NC48ads_A100_v4 Standard_NC80adis_H100_v5"
+instance_count: 1
+scoring_port: 8000
+scoring_path: /
+model_mount_path: /opt/ml/model
+environment_variables:
+  VLLM_TENSOR_PARALLEL_SIZE: "1"
+  VLLM_MAX_MODEL_LEN: "262144"
+  VLLM_GPU_MEMORY_UTILIZATION: "0.9"
+  VLLM_MAX_NUM_SEQS: "114"
+  VLLM_TOOL_CALL_PARSER: "hermes"
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+  VLLM_NO_USAGE_STATS: "1"
+  HF_HOME: "/tmp/hf_cache"
+request_settings:
+  request_timeout_ms: 90000
+  max_concurrent_requests_per_instance: 250
+liveness_probe:
+  initial_delay: 600
+  period: 10
+  timeout: 10
+  success_threshold: 1
+  scheme: http
+  method: GET
+  path: /health
+  port: 8000
+readiness_probe:
+  initial_delay: 600
+  period: 10
+  timeout: 10
+  success_threshold: 1
+  scheme: http
+  method: GET
+  path: /health
+  port: 8000

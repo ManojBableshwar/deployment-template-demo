@@ -17,6 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # -- Parse args ---------------------------------------------------------------
 E2E_SKUS_ARG=()
+E2E_TPS_ARG=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --hf-model) export HF_MODEL_ID="$2"; shift 2 ;;
@@ -25,7 +26,7 @@ while [[ $# -gt 0 ]]; do
     --env-name) export ENVIRONMENT_NAME="$2"; shift 2 ;;
     --env-version) export ENVIRONMENT_VERSION="$2"; shift 2 ;;
     --dt-version) export TEMPLATE_VERSION="$2"; shift 2 ;;
-    --tp) export E2E_TP="$2"; shift 2 ;;
+    --tp) E2E_TPS_ARG+=("$2"); shift 2 ;;
     --sku)
       case "$2" in
         Standard_NC24ads_A100_v4)  E2E_SKUS_ARG+=("a100"); export INSTANCE_TYPE_A100="$2" ;;
@@ -41,7 +42,7 @@ done
 
 if [[ -z "${HF_MODEL_ID:-}" ]]; then
   echo "[ERROR] --hf-model is required."
-  echo "  Usage: run-e2e-cli.sh --hf-model Qwen/Qwen3.5-0.8B [--sku ...]"
+  echo "  Usage: run-e2e-cli.sh --hf-model Qwen/Qwen3.5-0.8B [--tp 1 --tp 2] [--sku ...]"
   exit 1
 fi
 
@@ -50,8 +51,16 @@ if [[ ${#E2E_SKUS_ARG[@]} -eq 0 ]]; then
   E2E_SKUS_ARG=("a100" "h100")
 fi
 export E2E_SKUS="${E2E_SKUS_ARG[*]}"
+
+# Default to TP=1 if none specified
+if [[ ${#E2E_TPS_ARG[@]} -eq 0 ]]; then
+  E2E_TPS_ARG=("1")
+fi
+export E2E_TPS="${E2E_TPS_ARG[*]}"
+
 echo "[INFO] Command: $E2E_CLI_CMD"
 echo "[INFO] HF Model: $HF_MODEL_ID"
+echo "[INFO] Target TPs: $E2E_TPS"
 echo "[INFO] Target SKUs: $E2E_SKUS"
 
 # -- Source environment (resolves HF_MODEL_ID → paths & names) ----------------
@@ -119,11 +128,12 @@ _sub_log_pattern() {
   esac
 }
 
-# Extract SKU label from a sub-log filename (e.g. "5-deploy-h100.log" → "h100")
-_sub_log_sku() {
+# Extract TP×SKU label from a sub-log filename (e.g. "5-deploy-tp1-h100.log" → "tp1-h100")
+_sub_log_label() {
   local fname
   fname="$(basename "$1" .log)"
-  echo "${fname##*-}"
+  # Strip the step prefix (e.g. "5-deploy-" or "7-bench-") to get "tp1-h100"
+  echo "${fname#*-*-}"
 }
 
 # Detect action for a sub-log: SKIPPED vs CREATED
@@ -155,11 +165,11 @@ _collect_sub_tasks() {
   [[ -n "$sub_pattern" ]] || return 0
   for sub_log in $sub_pattern; do
     [[ -f "$sub_log" ]] || continue
-    local sub_sku sub_action sub_time
-    sub_sku=$(_sub_log_sku "$sub_log")
+    local sub_label sub_action sub_time
+    sub_label=$(_sub_log_label "$sub_log")
     sub_action=$(_sub_log_action "$sub_log")
     sub_time=$(_sub_log_time "$sub_log")
-    STEP_TIMINGS+=("$(printf '  └─ %-32s %10s  %-8s  %s' "$sub_sku" "$sub_time" "" "$sub_action")")
+    STEP_TIMINGS+=("$(printf '  └─ %-32s %10s  %-8s  %s' "$sub_label" "$sub_time" "" "$sub_action")")
   done
 }
 
@@ -230,6 +240,7 @@ SUMMARY="======================================================================
 [SUMMARY] CLI E2E Run -- $TIMESTAMP -- model=$HF_MODEL_ID
 ======================================================================
   Command:    $E2E_CLI_CMD
+  TPs:        $E2E_TPS
   SKUs:       $E2E_SKUS
   Versions:   model=$MODEL_VERSION  env=$ENVIRONMENT_VERSION  dt=$TEMPLATE_VERSION
   Total time: ${TOTAL_MINS}m ${TOTAL_SECS}s
@@ -261,11 +272,28 @@ echo "======================================================================"
 BENCH_DIR="$LOG_DIR/benchmark"
 PLOT_SCRIPT="$SCRIPT_DIR/plot-benchmark.py"
 if [[ -d "$BENCH_DIR" && -f "$PLOT_SCRIPT" ]]; then
+  # Prefer .venv python (has matplotlib) over system python
+  _plot_py=python3
+  _venv_py="$(cd "$SCRIPT_DIR/../.." && pwd)/.venv/bin/python3"
+  if [[ -x "$_venv_py" ]]; then
+    _plot_py="$_venv_py"
+  fi
   echo "[INFO] Generating benchmark plots (including partial runs)..."
-  if python3 "$PLOT_SCRIPT" "$BENCH_DIR" 2>/dev/null; then
+  if "$_plot_py" "$PLOT_SCRIPT" "$BENCH_DIR" 2>/dev/null; then
     echo "  Plots:  $BENCH_DIR/plots/"
   else
     echo "[WARN] Plot generation failed (non-fatal)"
+  fi
+
+  # Interactive HTML dashboard (no extra deps, uses stdlib only)
+  DASH_SCRIPT="$SCRIPT_DIR/benchmark-dashboard.py"
+  if [[ -f "$DASH_SCRIPT" ]]; then
+    echo "[INFO] Generating interactive benchmark dashboard..."
+    if python3 "$DASH_SCRIPT" "$BENCH_DIR" -o "$BENCH_DIR/plots/benchmark-dashboard.html" 2>/dev/null; then
+      echo "  Dashboard: $BENCH_DIR/plots/benchmark-dashboard.html"
+    else
+      echo "[WARN] Dashboard generation failed (non-fatal)"
+    fi
   fi
 fi
 

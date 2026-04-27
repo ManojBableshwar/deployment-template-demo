@@ -109,12 +109,53 @@ export ENDPOINT_NAME_H100="${ENDPOINT_NAME_H100:-$(truncate_name "${MODEL_SLUG}-
 export API_VERSION="${API_VERSION:-2024-10-01}"
 export API_VERSION_PREVIEW="${API_VERSION_PREVIEW:-2025-04-01-preview}"
 
+# -- TP → SKU mapping ---------------------------------------------------------
+# Maps a TP value to the correct SKU instance type.
+# TP=1 → 1-GPU SKUs, TP=2 → 2-GPU SKUs, etc.
+tp_to_instance_type() {
+  local tp="$1" gpu_family="$2"
+  case "${gpu_family}" in
+    a100)
+      case "$tp" in
+        1) echo "Standard_NC24ads_A100_v4" ;;
+        2) echo "Standard_NC48ads_A100_v4" ;;
+        *) echo "Standard_NC48ads_A100_v4" ;;
+      esac ;;
+    h100)
+      case "$tp" in
+        1) echo "Standard_NC40ads_H100_v5" ;;
+        2) echo "Standard_NC80adis_H100_v5" ;;
+        *) echo "Standard_NC80adis_H100_v5" ;;
+      esac ;;
+  esac
+}
+
+# Generate DT name for a given TP value
+tp_template_name() {
+  local tp="$1"
+  local base="${TEMPLATE_NAME}"
+  echo "${base}-tp${tp}"
+}
+
+# Generate endpoint name for a TP×SKU combo (32 char Azure limit)
+tp_sku_endpoint_name() {
+  local tp="$1" sku="$2"
+  truncate_name "${MODEL_SLUG}-tp${tp}-${sku}" 32
+}
+
+# Generate deployment name for a TP×SKU combo (32 char Azure limit)
+tp_sku_deployment_name() {
+  local tp="$1"
+  truncate_name "${MODEL_SLUG}-tp${tp}-vllm" 32
+}
+
 # Helper: ARM base URLs
 export REGISTRY_BASE="https://management.azure.com/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/registries/${AZUREML_REGISTRY}"
 export WORKSPACE_BASE="https://management.azure.com/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/workspaces/${AZUREML_WORKSPACE}"
 
 # -- Hydrate YAML templates → model yaml/ dir ---------------------------------
 # Generates concrete YAML files from shared templates for the current model.
+# Generates per-TP deployment templates and per-TP×SKU endpoint/deployment YAMLs.
 # Safe to call repeatedly (overwrites generated files).
 hydrate_yaml() {
   local tmpl_dir="$TEMPLATES_DIR/yaml"
@@ -126,10 +167,91 @@ hydrate_yaml() {
   cp "$tmpl_dir/docker/vllm-run.sh" "$out_dir/docker/vllm-run.sh"
   chmod +x "$out_dir/docker/vllm-run.sh"
 
-  # Build a sed script file for all substitutions (avoids eval + special-char issues)
+  # Read TP and SKU lists from environment
+  local tps skus
+  read -ra tps <<< "${E2E_TPS:-1}"
+  read -ra skus <<< "${E2E_SKUS:-a100 h100}"
+
+  # -- Generate per-TP deployment templates ------------------------------------
+  local dt_tmpl="$tmpl_dir/deployment-template.tmpl.yml"
+  if [[ -f "$dt_tmpl" ]]; then
+    for tp in "${tps[@]}"; do
+      local dt_name
+      dt_name=$(tp_template_name "$tp")
+      local default_inst
+      default_inst=$(tp_to_instance_type "$tp" "a100")
+
+      # Build allowed_instance_types across ALL TPs (not just this TP)
+      # so the default DT allows instance types from all TPs
+      local allowed_types=""
+      for _tp in "${tps[@]}"; do
+        for sku in a100 h100; do
+          local it
+          it=$(tp_to_instance_type "$_tp" "$sku")
+          if [[ -n "$allowed_types" ]]; then
+            allowed_types="$allowed_types $it"
+          else
+            allowed_types="$it"
+          fi
+        done
+      done
+
+      local sed_script
+      sed_script=$(mktemp)
+      cat > "$sed_script" <<SEDEOF
+s|\${HF_MODEL_ID}|${HF_MODEL_ID}|g
+s|\${TEMPLATE_NAME}|${dt_name}|g
+s|\${TEMPLATE_VERSION}|${TEMPLATE_VERSION}|g
+s|\${ENVIRONMENT_NAME}|${ENVIRONMENT_NAME}|g
+s|\${ENVIRONMENT_VERSION}|${ENVIRONMENT_VERSION}|g
+s|\${AZUREML_REGISTRY}|${AZUREML_REGISTRY}|g
+s|\${INSTANCE_TYPE_H100}|${default_inst}|g
+SEDEOF
+      # Replace the entire allowed_instance_types line
+      local out="$out_dir/deployment-template-tp${tp}.yml"
+      sed -f "$sed_script" "$dt_tmpl" | \
+        sed "s|^allowed_instance_types:.*|allowed_instance_types: \"${allowed_types}\"|" > "$out"
+      rm -f "$sed_script"
+    done
+  fi
+
+  # -- Generate per-TP×SKU endpoint and deployment YAMLs ----------------------
+  for tp in "${tps[@]}"; do
+    for sku in "${skus[@]}"; do
+      local inst_type ep_name dep_name
+      inst_type=$(tp_to_instance_type "$tp" "$sku")
+      ep_name=$(tp_sku_endpoint_name "$tp" "$sku")
+      dep_name=$(tp_sku_deployment_name "$tp")
+
+      # Endpoint YAML
+      cat > "$out_dir/endpoint-tp${tp}-${sku}.yml" <<EPEOF
+\$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
+name: ${ep_name}
+auth_mode: key
+description: "Online endpoint for ${HF_MODEL_ID} TP=${tp} on $(echo "$sku" | tr a-z A-Z)"
+EPEOF
+
+      # Deployment YAML — env vars come from the DT, not the deployment
+      local dt_name_for_dep
+      dt_name_for_dep=$(tp_template_name "$tp")
+      cat > "$out_dir/deployment-tp${tp}-${sku}.yml" <<DEPEOF
+# Deployment YAML for TP=${tp} on $(echo "$sku" | tr a-z A-Z)
+# Env vars are managed by the deployment template (DT), not here.
+\$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: ${dep_name}
+endpoint_name: ${ep_name}
+model: azureml://registries/${AZUREML_REGISTRY}/models/${MODEL_NAME}/versions/${MODEL_VERSION}
+instance_type: ${inst_type}
+instance_count: 1
+properties:
+  azureml.deploymentTemplateOverride: "azureml://registries/${AZUREML_REGISTRY}/deploymenttemplates/${dt_name_for_dep}/versions/${TEMPLATE_VERSION}"
+DEPEOF
+    done
+  done
+
+  # -- Also generate legacy per-SKU templates (backward compatibility) ---------
   local sed_script
   sed_script=$(mktemp)
-
   local vars=(
     "HF_MODEL_ID"
     "MODEL_NAME" "MODEL_VERSION"
@@ -140,20 +262,18 @@ hydrate_yaml() {
     "ENDPOINT_NAME_A100" "ENDPOINT_NAME_H100"
     "AZUREML_REGISTRY"
   )
-
   for v in "${vars[@]}"; do
-    # Use | as sed delimiter to avoid issues with / in values (e.g. HF_MODEL_ID)
     printf 's|${%s}|%s|g\n' "$v" "${!v}" >> "$sed_script"
   done
-
   for tmpl in "$tmpl_dir"/*.tmpl.yml; do
     [[ -f "$tmpl" ]] || continue
     local base
     base="$(basename "$tmpl" .tmpl.yml)"
+    # Skip deployment-template (we generate per-TP versions above)
+    [[ "$base" == "deployment-template" ]] && continue
     local out="$out_dir/${base}.yml"
     sed -f "$sed_script" "$tmpl" > "$out"
   done
-
   rm -f "$sed_script"
 }
 

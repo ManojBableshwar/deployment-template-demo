@@ -54,9 +54,7 @@ done
 
 export VLLM_LOGGING_LEVEL=DEBUG
 
-# Build tool-calling flags conditionally.
-# Set VLLM_TOOL_CALL_PARSER in the deployment template to enable tool calling
-# for models that support it (e.g. "gemma4", "hermes", "llama3_json", "mistral").
+# -- Tool calling support (conditional) --
 TOOL_CALL_ARGS=()
 if [ -n "${VLLM_TOOL_CALL_PARSER:-}" ]; then
   echo "Tool calling enabled: parser=${VLLM_TOOL_CALL_PARSER}"
@@ -65,7 +63,7 @@ else
   echo "Tool calling disabled (VLLM_TOOL_CALL_PARSER not set)"
 fi
 
-echo "Starting vLLM with local model at: $MODEL_PATH"
+echo "Starting vLLM (debug mode) with local model at: $MODEL_PATH"
 exec python3 -m vllm.entrypoints.openai.api_server \
   --model "$MODEL_PATH" \
   --tensor-parallel-size "${VLLM_TENSOR_PARALLEL_SIZE:-1}" \

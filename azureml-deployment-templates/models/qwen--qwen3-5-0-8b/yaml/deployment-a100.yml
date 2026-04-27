@@ -2,6 +2,15 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: qwen--qwen3-5-0-8b-vllm
 endpoint_name: qwen--qwen3-5-0-8b-a100
-model: azureml://registries/mabables-reg-feb26/models/qwen--qwen3-5-0-8b/versions/50
+model: azureml://registries/mabables-reg-feb26/models/qwen--qwen3-5-0-8b/versions/62
 instance_type: Standard_NC24ads_A100_v4
 instance_count: 1
+environment_variables:
+  VLLM_TENSOR_PARALLEL_SIZE: "${VLLM_TENSOR_PARALLEL_SIZE}"
+  VLLM_MAX_MODEL_LEN: "${VLLM_MAX_MODEL_LEN}"
+  VLLM_GPU_MEMORY_UTILIZATION: "${VLLM_GPU_MEMORY_UTILIZATION}"
+  VLLM_MAX_NUM_SEQS: "${VLLM_MAX_NUM_SEQS}"
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+  VLLM_NO_USAGE_STATS: "1"
+  HF_HOME: "/tmp/hf_cache"

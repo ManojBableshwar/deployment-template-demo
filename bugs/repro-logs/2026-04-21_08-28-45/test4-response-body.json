@@ -1,0 +1,32 @@
+{
+  "error": {
+    "code": "UserError",
+    "severity": null,
+    "message": "Could not find asset with ID: azureml://registries/mabables-reg-feb26/environments/vllm-server/versions/2",
+    "messageFormat": null,
+    "messageParameters": null,
+    "referenceCode": null,
+    "detailsUri": null,
+    "target": null,
+    "details": [],
+    "innerError": {
+      "code": "NotFoundError",
+      "innerError": null
+    },
+    "debugInfo": null,
+    "additionalInfo": null
+  },
+  "correlation": {
+    "operation": "5dfaf45b7dcf479826f4f992223f14e1",
+    "request": "13efac33b76fe31d",
+    "RequestId": "13efac33b76fe31d"
+  },
+  "environment": "eastus2",
+  "location": "eastus2",
+  "time": "2026-04-21T15:29:53.2656967+00:00",
+  "componentName": "modelregistry",
+  "code": "NotFound",
+  "statusCode": 404,
+  "message": "Could not find asset with ID: azureml://registries/mabables-reg-feb26/environments/vllm-server/versions/2",
+  "details": []
+}

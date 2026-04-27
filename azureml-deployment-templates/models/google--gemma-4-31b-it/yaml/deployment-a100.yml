@@ -2,14 +2,14 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: google--gemma-4-31b-it-vllm
 endpoint_name: google--gemma-4-31b-it-a100
-model: azureml://registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/6
-instance_type: Standard_NC48ads_A100_v4
+model: azureml://registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/7
+instance_type: Standard_NC24ads_A100_v4
 instance_count: 1
 environment_variables:
-  VLLM_TENSOR_PARALLEL_SIZE: "2"
-  VLLM_MAX_MODEL_LEN: "65536"
-  VLLM_GPU_MEMORY_UTILIZATION: "0.85"
-  VLLM_MAX_NUM_SEQS: "20"
+  VLLM_TENSOR_PARALLEL_SIZE: "${VLLM_TENSOR_PARALLEL_SIZE}"
+  VLLM_MAX_MODEL_LEN: "${VLLM_MAX_MODEL_LEN}"
+  VLLM_GPU_MEMORY_UTILIZATION: "${VLLM_GPU_MEMORY_UTILIZATION}"
+  VLLM_MAX_NUM_SEQS: "${VLLM_MAX_NUM_SEQS}"
   HF_HUB_OFFLINE: "1"
   TRANSFORMERS_OFFLINE: "1"
   VLLM_NO_USAGE_STATS: "1"

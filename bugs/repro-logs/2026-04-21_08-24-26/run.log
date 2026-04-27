@@ -1,0 +1,20 @@
+[08:24:26] Starting DT change bug repro — logs in /Users/mabables/CODE/REPOS/deployment-template-demo/bugs/repro-logs/2026-04-21_08-24-26
+────────────────────────────────────────────────────────
+[08:24:26] Verifying prerequisites...
+[08:24:30]   ✓ deployment-template show --name vllm-google--gemma-4-31b-it --version 1
+[08:24:33]   ✓ deployment-template show --name vllm-google--gemma-4-31b-it --version 2
+[08:24:37]   ✓ deployment-template show --name vllm-google--gemma-4-31b-it --version 3
+[08:24:40]   ✓ environment show --name vllm-server --version 1
+[08:24:44]   ✓ environment show --name vllm-server --version 2
+[08:24:47]   ✓ model show --name google--gemma-4-31b-it --version 1
+────────────────────────────────────────────────────────
+[08:24:47] Test 1: CLI set same DT (v1 → v1)
+[08:25:04]   Before: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/1
+[08:25:40]   Result: PASS (exit=0)
+────────────────────────────────────────────────────────
+[08:25:40] Test 2: CLI change DT (v1 → v3)
+[08:25:52]   Before: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/1
+[08:25:57]   Result: FAIL (exit=1)
+────────────────────────────────────────────────────────
+[08:25:57] Test 3: MFE PATCH add (none → v2)
+[08:26:05]   Before: (none)

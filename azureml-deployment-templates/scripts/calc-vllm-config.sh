@@ -263,15 +263,15 @@ summary = (
     f'seq_len={seq_len}'
 )
 
-print(tensor_parallel_size, max_model_len, mem_util, max_num_seqs, bench_conc_str, '|', summary)
+print(tensor_parallel_size, max_model_len, mem_util, max_num_seqs, max_kv_tokens, bench_conc_str, '|', summary)
 "
 )
 
-# Parse: "tp max_len mem_util max_seqs conc1 conc2 ... | summary_text"
+# Parse: "tp max_len mem_util max_seqs max_kv_tok conc1 conc2 ... | summary_text"
 _PARAMS="${_CALC_OUTPUT%%|*}"
 _SUMMARY="${_CALC_OUTPUT#*| }"
 read -r VLLM_TENSOR_PARALLEL_SIZE VLLM_MAX_MODEL_LEN VLLM_GPU_MEMORY_UTILIZATION VLLM_MAX_NUM_SEQS \
-  _BENCH_CONC_REST <<< "$_PARAMS"
+  BENCHMARK_MAX_KV_TOKENS _BENCH_CONC_REST <<< "$_PARAMS"
 BENCHMARK_CONCURRENCIES="$_BENCH_CONC_REST"
 
 # ── Output ───────────────────────────────────────────────────────────────────
@@ -281,6 +281,7 @@ case "$OUTPUT_MODE" in
     echo "export VLLM_MAX_MODEL_LEN=\"$VLLM_MAX_MODEL_LEN\""
     echo "export VLLM_GPU_MEMORY_UTILIZATION=\"$VLLM_GPU_MEMORY_UTILIZATION\""
     echo "export VLLM_MAX_NUM_SEQS=\"$VLLM_MAX_NUM_SEQS\""
+    echo "export BENCHMARK_MAX_KV_TOKENS=\"$BENCHMARK_MAX_KV_TOKENS\""
     echo "export BENCHMARK_CONCURRENCIES=\"$BENCHMARK_CONCURRENCIES\""
     ;;
   yaml)
@@ -288,6 +289,7 @@ case "$OUTPUT_MODE" in
     echo "  VLLM_MAX_MODEL_LEN: \"$VLLM_MAX_MODEL_LEN\""
     echo "  VLLM_GPU_MEMORY_UTILIZATION: \"$VLLM_GPU_MEMORY_UTILIZATION\""
     echo "  VLLM_MAX_NUM_SEQS: \"$VLLM_MAX_NUM_SEQS\""
+    echo "  # BENCHMARK_MAX_KV_TOKENS: $BENCHMARK_MAX_KV_TOKENS"
     echo "  # BENCHMARK_CONCURRENCIES: $BENCHMARK_CONCURRENCIES"
     ;;
   summary)

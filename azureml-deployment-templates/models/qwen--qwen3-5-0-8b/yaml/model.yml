@@ -1,9 +1,9 @@
 $schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
 name: qwen--qwen3-5-0-8b
-version: 50
+version: 62
 path: ../../model-artifacts
 type: custom_model
-description: "Qwen/Qwen3.5-0.8B with deployment template v50"
+description: "Qwen/Qwen3.5-0.8B with deployment template v62"
 properties:
   aotManifest: "True"
 tags:
@@ -11,4 +11,4 @@ tags:
   hf_model_id: Qwen/Qwen3.5-0.8B
   framework: transformers
 default_deployment_template:
-  asset_id: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-qwen--qwen3-5-0-8b/versions/50
+  asset_id: azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-qwen--qwen3-5-0-8b/versions/62

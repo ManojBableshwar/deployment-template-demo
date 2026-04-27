@@ -1,0 +1,61 @@
+DEBUG: cli.knack.cli: Command arguments: ['ml', 'model', 'update', '--name', 'google--gemma-4-31b-it', '--version', '1', '--registry-name', 'mabables-reg-feb26', '--set', 'default_deployment_template.asset_id=azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/1', '--debug']
+DEBUG: cli.knack.cli: __init__ debug log:
+Cannot enable color.
+DEBUG: cli.knack.cli: Event: Cli.PreExecute []
+DEBUG: cli.knack.cli: Event: CommandParser.OnGlobalArgumentsCreate [<function CLILogging.on_global_arguments at 0x102518ea0>, <function OutputProducer.on_global_arguments at 0x102d1ae80>, <function CLIQuery.on_global_arguments at 0x102d5d3a0>]
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPreCommandTableCreate []
+DEBUG: cli.azure.cli.core: Modules found from index for 'ml': ['azext_mlv2']
+DEBUG: cli.azure.cli.core: Loading command modules:
+DEBUG: cli.azure.cli.core: Name                  Load Time    Groups  Commands
+DEBUG: cli.azure.cli.core: Total (0)                 0.000         0         0
+DEBUG: cli.azure.cli.core: These extensions are not installed and will be skipped: ['azext_ai_examples', 'azext_next']
+DEBUG: cli.azure.cli.core: Loading extensions:
+DEBUG: cli.azure.cli.core: Name                  Load Time    Groups  Commands  Directory
+DEBUG: azure.ai.ml._azure_environments: Using the default cloud configuration: 'AzureCloud'.
+DEBUG: azure.ai.ml._azure_environments: Using the default cloud configuration: 'AzureCloud'.
+DEBUG: azure.ai.ml._azure_environments: Using the default cloud configuration: 'AzureCloud'.
+DEBUG: cli.azure.cli.core: ml                        1.352        26       171  /Users/mabables/.azure/cliextensions/ml
+DEBUG: cli.azure.cli.core: Total (1)                 1.352        26       171  
+DEBUG: cli.azure.cli.core: Loaded 26 groups, 171 commands.
+DEBUG: cli.azure.cli.core: Found a match in the command table.
+DEBUG: cli.azure.cli.core: Raw command  : ml model update
+DEBUG: cli.azure.cli.core: Command table: ml model update
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPreCommandTableTruncate [<function AzCliLogging.init_command_file_logging at 0x103bcf9c0>]
+DEBUG: cli.azure.cli.core.azlogging: metadata file logging enabled - writing logs to '/Users/mabables/.azure/commands/2026-04-21.08-23-01.ml_model_update.63304.log'.
+INFO: az_command_data_logger: command args: ml model update --name {} --version {} --registry-name {} --set {} --debug
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPreArgumentLoad [<function register_global_subscription_argument.<locals>.add_subscription_parameter at 0x103c15440>]
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPostArgumentLoad []
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPostCommandTableCreate [<function register_ids_argument.<locals>.add_ids_arguments at 0x103c17740>, <function register_cache_arguments.<locals>.add_cache_arguments at 0x103c17920>, <function register_upcoming_breaking_change_info.<locals>.update_breaking_change_info at 0x103c179c0>]
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnCommandTableLoaded []
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPreParseArgs []
+DEBUG: urllib3.connectionpool: Starting new HTTPS connection (1): app.aladdin.microsoft.com:443
+DEBUG: urllib3.connectionpool: https://app.aladdin.microsoft.com:443 "GET /api/v1.0/suggestions?query=%7B%22command%22%3A+%22ml+model+update%22%2C+%22parameters%22%3A+%22--name%2C--registry-name%2C--version%2C--set%22%7D&clientType=AzureCli&context=%7B%22versionNumber%22%3A+%222.83.0%22%2C+%22errorType%22%3A+%22MissingRequiredParameters%22%2C+%22correlationId%22%3A+%226700c718-e859-40bb-9820-50b328ed7663%22%2C+%22subscriptionId%22%3A+%2275703df0-38f9-4e2e-8328-45f6fc810286%22%2C+%22eventId%22%3A+%22277a75fd-c9b2-4de1-ab27-ba02eb0e3d68%22%7D HTTP/1.1" 200 None
+DEBUG: cli.azure.cli.core.azclierror: Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.13/Frameworks/Python.framework/Versions/3.13/lib/python3.13/argparse.py", line 1965, in _parse_known_args2
+    namespace, args = self._parse_known_args(args, namespace, intermixed)
+                      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.13/Frameworks/Python.framework/Versions/3.13/lib/python3.13/argparse.py", line 2262, in _parse_known_args
+    raise ArgumentError(None, _('the following arguments are required: %s') %
+               ', '.join(required_actions))
+argparse.ArgumentError: the following arguments are required: --resource-group/-g
+
+ERROR: cli.azure.cli.core.azclierror: the following arguments are required: --resource-group/-g
+ERROR: az_command_data_logger: the following arguments are required: --resource-group/-g
+
+Examples from AI knowledge base:
+az ml model update --name my-model --version 1 --set flavors.python_function.python_version=3.8 --resource-group my-resource-group --workspace-name my-workspace
+Update a model's flavors
+
+https://aka.ms/cli_ref
+Read more about the command in reference docs
+DEBUG: cli.knack.cli: Event: Cli.PostExecute [<function AzCliLogging.deinit_cmd_metadata_logging at 0x103bcfc40>]
+INFO: az_command_data_logger: exit code: 2
+INFO: cli.__main__: Command ran in 1.690 seconds (init: 0.094, invoke: 1.595)
+INFO: telemetry.main: Begin splitting cli events and extra events, total events: 1
+INFO: telemetry.client: Accumulated 0 events. Flush the clients.
+INFO: telemetry.main: Finish splitting cli events and extra events, cli events: 1
+INFO: telemetry.save: Save telemetry record of length 4324 in cache file under /Users/mabables/.azure/telemetry/20260421082302245
+INFO: telemetry.main: Begin creating telemetry upload process.
+INFO: telemetry.process: Creating upload process: "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/bin/python /opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/telemetry/__init__.py /Users/mabables/.azure /Users/mabables/.azure/telemetry/20260421082302245"
+INFO: telemetry.process: Return from creating process 63318
+INFO: telemetry.main: Finish creating telemetry upload process.

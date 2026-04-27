@@ -26,22 +26,46 @@ MODEL_LABEL = os.environ.get("HF_MODEL_ID", sys.argv[2] if len(sys.argv) > 2 els
 OUT_DIR = os.path.join(BENCH_DIR, "plots")
 os.makedirs(OUT_DIR, exist_ok=True)
 
-CONCURRENCIES = [2, 4, 8, 16, 24, 48, 96]
-# Auto-detect concurrencies from benchmark directories if they differ from defaults
+STATS = ["avg", "p50", "p90"]
+
+# ── Auto-detect combo directories (supports a100/h100 or tp1-a100/tp2-h100) ──
+def _detect_combos(bench_dir):
+    combos = []
+    if not os.path.isdir(bench_dir):
+        return combos
+    for entry in sorted(os.listdir(bench_dir)):
+        entry_path = os.path.join(bench_dir, entry)
+        if not os.path.isdir(entry_path):
+            continue
+        has_runs = any(
+            e.startswith("c") and "_in" in e
+            for e in os.listdir(entry_path)
+            if os.path.isdir(os.path.join(entry_path, e))
+        )
+        if has_runs:
+            combos.append((entry, entry.upper()))
+    return combos
+
+COMBOS = _detect_combos(BENCH_DIR)
+if not COMBOS:
+    print(f"ERROR: No benchmark combo directories found in {BENCH_DIR}")
+    sys.exit(1)
+print(f"Detected combos: {[c[1] for c in COMBOS]}")
+GPUS = [c[0] for c in COMBOS]
+GPU_LABELS = {c[0]: c[1] for c in COMBOS}
+
+# Auto-detect concurrencies from benchmark directories
 _detected = set()
-for _gpu in ["a100", "h100"]:
+for _gpu in GPUS:
     _gpu_dir = os.path.join(BENCH_DIR, _gpu)
     if os.path.isdir(_gpu_dir):
         for _entry in os.listdir(_gpu_dir):
             if _entry.startswith("c") and "_in" in _entry:
-                _c = _entry.split("_")[0][1:]  # "c16_in200_out800" -> "16"
+                _c = _entry.split("_")[0][1:]
                 if _c.isdigit():
                     _detected.add(int(_c))
-if _detected:
-    CONCURRENCIES = sorted(_detected)
-STATS = ["avg", "p50", "p90"]
-GPUS = ["a100", "h100"]
-GPU_LABELS = {"a100": "A100", "h100": "H100"}
+CONCURRENCIES = sorted(_detected) if _detected else [2, 4, 8, 16, 24, 48, 96]
+print(f"Concurrencies: {CONCURRENCIES}")
 
 # 4 request shapes: key, dir_pattern, display_name
 SHAPES = [
@@ -51,9 +75,11 @@ SHAPES = [
     ("long_prompt",  "c{c}_in8000_out2000",  "Long-Prompt (8000→2000)"),
 ]
 
-# Colors/markers: gpu × shape combos
-GPU_COLORS = {"a100": "#4C72B0", "h100": "#C44E52"}
-GPU_MARKERS = {"a100": "o", "h100": "s"}
+# Colors/markers: dynamic for N combos
+_base_colors = ["#4C72B0", "#C44E52", "#55A868", "#8172B2", "#CCB974", "#64B5CD", "#E5AE38", "#6D904F"]
+_base_markers = ["o", "s", "^", "D", "v", "P", "X", "*"]
+GPU_COLORS = {c[0]: _base_colors[i % len(_base_colors)] for i, c in enumerate(COMBOS)}
+GPU_MARKERS = {c[0]: _base_markers[i % len(_base_markers)] for i, c in enumerate(COMBOS)}
 SHAPE_LINESTYLES = {
     "short_gen": "-", "short_prompt": "--",
     "long_gen": "-.", "long_prompt": ":",
@@ -134,7 +160,7 @@ METRICS_ROW2 = [
 ]
 
 for stat in STATS:
-    suptitle_info = f"{MODEL_LABEL} · vLLM · A100 vs H100 · max_num_seqs=48  (metric: {stat})"
+    suptitle_info = f"{MODEL_LABEL} · vLLM · {' vs '.join(GPU_LABELS[g] for g in GPUS)}  (metric: {stat})"
     fig, axes = plt.subplots(2, 3, figsize=(20, 11))
 
     for col, (metric, ylabel, title_tpl, fmt) in enumerate(METRICS_ROW1):
@@ -163,7 +189,7 @@ for stat in STATS:
         ax.set_title(title_tpl.format(stat=stat), fontsize=12, fontweight="bold")
         ax.legend(fontsize=6, ncol=2); ax.grid(alpha=0.3); ax.set_xticks(CONCURRENCIES)
 
-    fig.suptitle(f"Benchmark Results vs Concurrency — A100 vs H100\n{suptitle_info}", fontsize=14, fontweight="bold")
+    fig.suptitle(f"Benchmark Results vs Concurrency — {' vs '.join(GPU_LABELS[g] for g in GPUS)}\n{suptitle_info}", fontsize=14, fontweight="bold")
     fig.tight_layout()
     p = os.path.join(OUT_DIR, f"benchmark_{stat}.png")
     fig.savefig(p, dpi=150); plt.close(fig); print(f"Saved: {p}")
@@ -199,8 +225,8 @@ for key, pat, shape_label in SHAPES:
         ax.set_title(title, fontsize=13, fontweight="bold")
         ax.legend(fontsize=8, ncol=2); ax.grid(alpha=0.3); ax.set_xticks(CONCURRENCIES)
 
-    fig.suptitle(f"Percentile Comparison — {shape_label}  (A100 vs H100)\n"
-                 f"{MODEL_LABEL} · vLLM · max_num_seqs=48  (avg vs p50 vs p90)\n"
+    fig.suptitle(f"Percentile Comparison — {shape_label}  ({' vs '.join(GPU_LABELS[g] for g in GPUS)})\n"
+                 f"{MODEL_LABEL} · vLLM  (avg vs p50 vs p90)\n"
                  f"Note: Throughput totals are aggregate (no percentile distribution) — see benchmark_*.png",
                  fontsize=13, fontweight="bold")
     fig.tight_layout()
@@ -242,7 +268,12 @@ for gpu in GPUS:
         }
 
 # Build per-shape error series
-fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+n_combos = len(GPUS)
+n_cols_err = max(2, min(n_combos, 2))
+n_rows_err = 1 + (n_combos + n_cols_err - 1) // n_cols_err
+fig, axes = plt.subplots(n_rows_err, n_cols_err, figsize=(16, 6 * n_rows_err))
+if n_rows_err == 1:
+    axes = axes.reshape(1, -1)
 
 # Plot 1: Error Count (absolute)
 ax = axes[0, 0]
@@ -275,9 +306,13 @@ ax.set_xlabel("Concurrent Clients", fontsize=11); ax.set_ylabel("Error Rate (%)"
 ax.set_title("Error Rate (%) vs Concurrency", fontsize=12, fontweight="bold")
 ax.legend(fontsize=6, ncol=2); ax.grid(alpha=0.3); ax.set_xticks(CONCURRENCIES)
 
-# Plot 3 & 4: Stacked bar charts of error types per concurrency (one per GPU)
+# Stacked bar charts of error types per concurrency (one per combo)
 for gpu_idx, gpu in enumerate(GPUS):
-    ax = axes[1, gpu_idx]
+    row = 1 + gpu_idx // n_cols_err
+    col = gpu_idx % n_cols_err
+    if row >= n_rows_err or col >= n_cols_err:
+        break
+    ax = axes[row, col]
     # Collect all error types across all runs for this GPU
     all_types = set()
     for run_info in error_data[gpu].values():
@@ -320,8 +355,15 @@ for gpu_idx, gpu in enumerate(GPUS):
             unique_h.append(h); unique_l.append(l)
     ax.legend(unique_h, unique_l, fontsize=5, ncol=1, loc="upper left")
 
-fig.suptitle(f"Errors & Timeouts — A100 vs H100\n"
-             f"{MODEL_LABEL} · vLLM · TP=1 · max_num_seqs=3  (100 requests per run)",
+# Hide unused subplots
+for ci in range(n_combos, (n_rows_err - 1) * n_cols_err):
+    row = 1 + ci // n_cols_err
+    col = ci % n_cols_err
+    if row < n_rows_err and col < n_cols_err:
+        axes[row, col].set_visible(False)
+
+fig.suptitle(f"Errors & Timeouts — {' vs '.join(GPU_LABELS[g] for g in GPUS)}\n"
+             f"{MODEL_LABEL} · vLLM",
              fontsize=14, fontweight="bold")
 fig.tight_layout()
 p = os.path.join(OUT_DIR, "errors.png")

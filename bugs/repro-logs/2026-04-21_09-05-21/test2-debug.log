@@ -1,0 +1,870 @@
+DEBUG: cli.knack.cli: Command arguments: ['ml', 'model', 'update', '--name', 'google--gemma-4-31b-it', '--version', '1', '--registry-name', 'mabables-reg-feb26', '--resource-group', 'mabables-rg', '--set', 'default_deployment_template.asset_id=azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/3', '--debug']
+DEBUG: cli.knack.cli: __init__ debug log:
+Cannot enable color.
+DEBUG: cli.knack.cli: Event: Cli.PreExecute []
+DEBUG: cli.knack.cli: Event: CommandParser.OnGlobalArgumentsCreate [<function CLILogging.on_global_arguments at 0x105300ea0>, <function OutputProducer.on_global_arguments at 0x105b02e80>, <function CLIQuery.on_global_arguments at 0x105b453a0>]
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPreCommandTableCreate []
+DEBUG: cli.azure.cli.core: Modules found from index for 'ml': ['azext_mlv2']
+DEBUG: cli.azure.cli.core: Loading command modules:
+DEBUG: cli.azure.cli.core: Name                  Load Time    Groups  Commands
+DEBUG: cli.azure.cli.core: Total (0)                 0.000         0         0
+DEBUG: cli.azure.cli.core: These extensions are not installed and will be skipped: ['azext_ai_examples', 'azext_next']
+DEBUG: cli.azure.cli.core: Loading extensions:
+DEBUG: cli.azure.cli.core: Name                  Load Time    Groups  Commands  Directory
+DEBUG: azure.ai.ml._azure_environments: Using the default cloud configuration: 'AzureCloud'.
+DEBUG: azure.ai.ml._azure_environments: Using the default cloud configuration: 'AzureCloud'.
+DEBUG: azure.ai.ml._azure_environments: Using the default cloud configuration: 'AzureCloud'.
+DEBUG: cli.azure.cli.core: ml                        1.588        26       171  /Users/mabables/.azure/cliextensions/ml
+DEBUG: cli.azure.cli.core: Total (1)                 1.588        26       171  
+DEBUG: cli.azure.cli.core: Loaded 26 groups, 171 commands.
+DEBUG: cli.azure.cli.core: Found a match in the command table.
+DEBUG: cli.azure.cli.core: Raw command  : ml model update
+DEBUG: cli.azure.cli.core: Command table: ml model update
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPreCommandTableTruncate [<function AzCliLogging.init_command_file_logging at 0x1069879c0>]
+DEBUG: cli.azure.cli.core.azlogging: metadata file logging enabled - writing logs to '/Users/mabables/.azure/commands/2026-04-21.09-06-59.ml_model_update.85064.log'.
+INFO: az_command_data_logger: command args: ml model update --name {} --version {} --registry-name {} --resource-group {} --set {} --debug
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPreArgumentLoad [<function register_global_subscription_argument.<locals>.add_subscription_parameter at 0x1069cd440>]
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPostArgumentLoad []
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPostCommandTableCreate [<function register_ids_argument.<locals>.add_ids_arguments at 0x1069cf740>, <function register_cache_arguments.<locals>.add_cache_arguments at 0x1069cf920>, <function register_upcoming_breaking_change_info.<locals>.update_breaking_change_info at 0x1069cf9c0>]
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnCommandTableLoaded []
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPreParseArgs []
+DEBUG: cli.knack.cli: Event: CommandInvoker.OnPostParseArgs [<function OutputProducer.handle_output_argument at 0x105b02f20>, <function CLIQuery.handle_query_parameter at 0x105b45440>, <function register_ids_argument.<locals>.parse_ids_arguments at 0x1069cf7e0>]
+INFO: az_command_data_logger: extension name: ml
+INFO: az_command_data_logger: extension version: 2.42.0
+DEBUG: cli.azure.cli.core.commands.client_factory: Getting management service client client_type=AzureMachineLearningWorkspaces
+DEBUG: cli.azure.cli.core.auth.persistence: build_persistence: location='/Users/mabables/.azure/msal_token_cache.json', encrypt=False
+DEBUG: cli.azure.cli.core.auth.binary_cache: load: /Users/mabables/.azure/msal_http_cache.bin
+DEBUG: urllib3.util.retry: Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+DEBUG: msal.authority: Initializing with Entra authority: https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2
+DEBUG: msal.authority: openid_config("https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/v2.0/.well-known/openid-configuration") = {'token_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/token', 'token_endpoint_auth_methods_supported': ['client_secret_post', 'private_key_jwt', 'client_secret_basic', 'self_signed_tls_client_auth'], 'jwks_uri': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/discovery/v2.0/keys', 'response_modes_supported': ['query', 'fragment', 'form_post'], 'subject_types_supported': ['pairwise'], 'id_token_signing_alg_values_supported': ['RS256'], 'response_types_supported': ['code', 'id_token', 'code id_token', 'id_token token'], 'scopes_supported': ['openid', 'profile', 'email', 'offline_access'], 'request_uri_parameter_supported': False, 'userinfo_endpoint': 'https://graph.microsoft.com/oidc/userinfo', 'authorization_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/authorize', 'device_authorization_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/devicecode', 'http_logout_supported': True, 'frontchannel_logout_supported': True, 'end_session_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/logout', 'claims_supported': ['sub', 'iss', 'cloud_instance_name', 'cloud_instance_host_name', 'cloud_graph_host_name', 'msgraph_host', 'aud', 'exp', 'iat', 'auth_time', 'acr', 'nonce', 'preferred_username', 'name', 'tid', 'ver', 'at_hash', 'c_hash', 'email'], 'kerberos_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/kerberos', 'mtls_endpoint_aliases': {'token_endpoint': 'https://mtlsauth.microsoft.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/token'}, 'tls_client_certificate_bound_access_tokens': True, 'tenant_region_scope': 'NA', 'cloud_instance_name': 'microsoftonline.com', 'cloud_graph_host_name': 'graph.windows.net', 'msgraph_host': 'graph.microsoft.com', 'rbac_url': 'https://pas.windows.net'}
+DEBUG: msal.application: Broker enabled? None
+DEBUG: cli.azure.cli.core.commands.client_factory: Getting management service client client_type=_ml_client_cli
+DEBUG: urllib3.util.retry: Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+DEBUG: msal.authority: Initializing with Entra authority: https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2
+DEBUG: msal.authority: openid_config("https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/v2.0/.well-known/openid-configuration") = {'token_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/token', 'token_endpoint_auth_methods_supported': ['client_secret_post', 'private_key_jwt', 'client_secret_basic', 'self_signed_tls_client_auth'], 'jwks_uri': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/discovery/v2.0/keys', 'response_modes_supported': ['query', 'fragment', 'form_post'], 'subject_types_supported': ['pairwise'], 'id_token_signing_alg_values_supported': ['RS256'], 'response_types_supported': ['code', 'id_token', 'code id_token', 'id_token token'], 'scopes_supported': ['openid', 'profile', 'email', 'offline_access'], 'request_uri_parameter_supported': False, 'userinfo_endpoint': 'https://graph.microsoft.com/oidc/userinfo', 'authorization_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/authorize', 'device_authorization_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/devicecode', 'http_logout_supported': True, 'frontchannel_logout_supported': True, 'end_session_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/logout', 'claims_supported': ['sub', 'iss', 'cloud_instance_name', 'cloud_instance_host_name', 'cloud_graph_host_name', 'msgraph_host', 'aud', 'exp', 'iat', 'auth_time', 'acr', 'nonce', 'preferred_username', 'name', 'tid', 'ver', 'at_hash', 'c_hash', 'email'], 'kerberos_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/kerberos', 'mtls_endpoint_aliases': {'token_endpoint': 'https://mtlsauth.microsoft.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/token'}, 'tls_client_certificate_bound_access_tokens': True, 'tenant_region_scope': 'NA', 'cloud_instance_name': 'microsoftonline.com', 'cloud_graph_host_name': 'graph.windows.net', 'msgraph_host': 'graph.microsoft.com', 'rbac_url': 'https://pas.windows.net'}
+DEBUG: msal.application: Broker enabled? None
+DEBUG: cli.azure.cli.core.auth.credential_adaptor: CredentialAdaptor.get_token_info: scopes=('https://management.azure.com/.default',), options={}
+DEBUG: cli.azure.cli.core.auth.msal_credentials: UserCredential.acquire_token: scopes=['https://management.azure.com/.default'], claims_challenge=None, kwargs={}
+DEBUG: msal.application: Cache hit an AT
+DEBUG: msal.telemetry: Generate or reuse correlation_id: 60dbbddf-b35c-432f-844e-a3e12d4de087
+DEBUG: azure.core.pipeline.policies._universal: Request URL: 'https://eastus.api.azureml.ms/registrymanagement/v1.0/registries/mabables-reg-feb26/discovery'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json, text/json'
+    'x-ms-client-request-id': '1fd110dc-3d9c-11f1-a979-02ab29fa3d86'
+    'User-Agent': 'azureml-cli-v2/2.38.1 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.13.13 (macOS-15.7.5-arm64-arm-64bit-Mach-O)'
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCIsImtpZCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvN2YyOTIzOTUtYTA4Zi00Y2MwLWIzZDAtYTQwMGIwMjNiMGQyLyIsImlhdCI6MTc3Njc4NDY0OSwibmJmIjoxNzc2Nzg0NjQ5LCJleHAiOjE3NzY3ODkyMzgsImFjciI6IjEiLCJhY3JzIjpbInAxIl0sImFpbyI6IkFUUUJ5LzRiQUFBQUhHdXpMSHJVbS9ydVptLzkzWkNaSzBNd2gybkFETlZEYTdUQWpTbUN0b1dSQVpySHRsemFiY1Irc3RKTVpsQjkvbS9rZEs5RGxnM1Iwc3k5NURxeEdrMjkrUUtya1JzQU5yYzAzemcwZ3kyQTZ5RE1nM3dZYjVvVW5NQUc0czN5dG1yaUFXZ1krdHlwVlA5RjZRZGN0ck5wY01IVjdhZGlzMlBUVlNUSUU3OHZjQ0dRTHlsOStUaGdlcHA0NjVIZUQ0d0Myb2FaQXhFUUYyeHNpQW15SG9jMWVUWmV1VkFzZW1kZTUrTVpQLzE0b0hOZG8yZ2VKQTVKcXBrOU9tVGY2TUZOYmg0Y0RqTHY0bXpMRnJjaXRLMmh5ckQ1a0xiUjlCeHV0Uk43WlFxZEdBK1drTkhlV3hHNWZCekEvaE8wazZsY0YyQktrYkdhazlPc2l6cHpzTTk2WjMrdCtEYU5kWmRKR0pqdTY1ZE1ob1FYeHY4UDd3U05SMEhQazlnQVgzL0JMdkR1TU5HMzI3VDNHamlYd1E9PSIsImFsdHNlY2lkIjoiNTo6MTAwMzAwMDA4NUQzRDA1RiIsImFtciI6WyJmaWRvIiwicnNhIiwibWZhIl0sImFwcGlkIjoiMDRiMDc3OTUtOGRkYi00NjFhLWJiZWUtMDJmOWUxYmY3YjQ2IiwiYXBwaWRhY3IiOiIwIiwiZW1haWwiOiJtYWJhYmxlc0BtaWNyb3NvZnQuY29tIiwiZmFtaWx5X25hbWUiOiJCYWJsZXNod2FyIiwiZ2l2ZW5fbmFtZSI6Ik1hbm9qIiwiZ3JvdXBzIjpbIjMzNTlkN2E3LWI3MzQtNDhjMS05NzM3LTIzOGRjMDIyZWJiYyIsIjM0MDVmM2I4LWZlNjgtNDNlYS1hNDJlLTE1MDY4N2RhOTg4NSIsIjA1YTJlYzU3LTJjYjYtNGZlNC1iMWQ5LTczZjUxNWIxZDdlYiIsIjhhMzEzZTc0LTI2OTUtNDMyMi1iMmFjLTVjNmE0MGViZGMzNyIsIjU1NDIwOWMwLWM4NzYtNDdmMC1hMjJhLTExODUzYjM3M2E3ZSJdLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiMjAuMjM2LjEwLjY2IiwibmFtZSI6Ik1hbm9qIEJhYmxlc2h3YXIiLCJvaWQiOiJiMGEzODQwMS04NjNhLTRiZjAtYmUxOS05NjQ0YzFmMDc3Y2EiLCJwdWlkIjoiMTAwMzIwMDMyMzU1QkY3RiIsInJoIjoiMS5BVkVBbFNNcGY0LWd3RXl6MEtRQXNDT3cwa1pJZjNrQXV0ZFB1a1Bhd2ZqMk1CTWFBSnhSQUEuIiwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic2lkIjoiMDBiODBkNDktMzk2NS0zYmEwLTBkMWUtNWEzNTQwYjkyYTgzIiwic3ViIjoiNUR5dlBPWTBpaUdzeHZvR1B1MHZRLWRSb1BNU29VcWV1d2xBS1hSS2lEayIsInRpZCI6IjdmMjkyMzk1LWEwOGYtNGNjMC1iM2QwLWE0MDBiMDIzYjBkMiIsInVuaXF1ZV9uYW1lIjoibWFiYWJsZXNAbWljcm9zb2Z0LmNvbSIsInV0aSI6InFsSmRRdGVXMjBpOHBlalRsMWtOQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbImFjNDM0MzA3LTEyYjktNGZhMS1hNzA4LTg4YmY1OGNhYWJjMSIsIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfYWN0X2ZjdCI6IjMgNSIsInhtc19lZG92Ijp0cnVlLCJ4bXNfZnRkIjoiM0IxNzN6YXZyUi1aWThHRUlxQkk3eWRBTnFJZmNBbUZuaFFFUU9jZmR6TUJkWE5sWVhOMExXUnpiWE0iLCJ4bXNfaWRyZWwiOiIyMCAxIiwieG1zX3N1Yl9mY3QiOiIzIDEwIiwieG1zX3RjZHQiOjE3MDE4MTc3ODh9.nFkuh-1BxaIVdrpW2iicYMRjSf0y6TDuSimfw6XiO2wrL52NNaZzMz5LXO0zz9OqzfUaa0egsMdnTf70fYAegB0U3yY7GdyXFvpaqah0lMXcakgHmOc-1KFs5QGUc1sj3_P_7dDCl680EPd22RtzN0sCmDBw6UsqOQTWif-lrHFR1kYQGcHVemzu8Hhy6ffLy1te5ywChlh9RFljAMjjIHtbBjLJZvZ31u5PIISPiuiheeZLuuO7njecHOWlA2fsS-gVA2gKGloPUo-Z0Og-9wB9998O29y-uDOYAXGguWzzjSTcFyoIJrGa-uD-ULNkwmogOFKHzFOChNr9LSSSRg'
+Request body:
+This request has no body
+DEBUG: urllib3.connectionpool: Starting new HTTPS connection (1): eastus.api.azureml.ms:443
+DEBUG: urllib3.connectionpool: https://eastus.api.azureml.ms:443 "GET /registrymanagement/v1.0/registries/mabables-reg-feb26/discovery HTTP/1.1" 200 None
+DEBUG: azure.core.pipeline.policies._universal: Response status: '200'
+Response headers:
+    'Date': 'Tue, 21 Apr 2026 16:07:00 GMT'
+    'Content-Type': 'application/json; charset=utf-8'
+    'Transfer-Encoding': 'chunked'
+    'Connection': 'keep-alive'
+    'Vary': 'Accept-Encoding'
+    'Request-Context': 'appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d'
+    'x-ms-response-type': 'standard'
+    'mise-correlation-id': 'd7d6406d-57d5-4606-bad5-1af92087bb9b'
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    'X-Content-Type-Options': 'nosniff'
+    'azureml-served-by-cluster': 'vienna-eastus-01'
+    'x-request-time': '0.031'
+    'Content-Encoding': 'gzip'
+Response content:
+{
+  "registryId": "2a830832-2f41-4c41-b9bb-794a353e209a",
+  "registryName": "mabables-reg-feb26",
+  "tenantId": "7f292395-a08f-4cc0-b3d0-a400b023b0d2",
+  "primaryRegion": "eastus2",
+  "regions": [
+    "eastus2"
+  ],
+  "subscriptionId": "75703df0-38f9-4e2e-8328-45f6fc810286",
+  "resourceGroup": "mabables-rg",
+  "workspaceName": null,
+  "primaryRegionResourceProviderUri": "https://cert-eastus2.experiments.azureml.net/",
+  "registryFqdns": {
+    "eastus2": {
+      "uri": "https://eastus2.api.azureml.ms"
+    }
+  },
+  "intellectualPropertyPublisher": null,
+  "isTradeRestricted": false
+}
+Class DeploymentTemplateOperations: This is an experimental class, and may change at any time. Please see https://aka.ms/azuremlexperimental for more information.
+DEBUG: cli.azure.cli.core.auth.credential_adaptor: CredentialAdaptor.get_token_info: scopes=('https://management.azure.com/.default',), options={}
+DEBUG: cli.azure.cli.core.auth.msal_credentials: UserCredential.acquire_token: scopes=['https://management.azure.com/.default'], claims_challenge=None, kwargs={}
+DEBUG: msal.application: Cache hit an AT
+DEBUG: msal.telemetry: Generate or reuse correlation_id: 3b9182bb-518d-4dca-8460-57dd4331d94c
+DEBUG: azure.core.pipeline.policies._universal: Request URL: 'https://cert-eastus2.experiments.azureml.net/mferp/managementfrontend/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/1?api-version=2021-10-01-dataplanepreview'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'x-ms-client-request-id': '1fd110dc-3d9c-11f1-a979-02ab29fa3d86'
+    'User-Agent': 'azureml-cli-v2/2.38.1 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.13.13 (macOS-15.7.5-arm64-arm-64bit-Mach-O)'
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCIsImtpZCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvN2YyOTIzOTUtYTA4Zi00Y2MwLWIzZDAtYTQwMGIwMjNiMGQyLyIsImlhdCI6MTc3Njc4NDY0OSwibmJmIjoxNzc2Nzg0NjQ5LCJleHAiOjE3NzY3ODkyMzgsImFjciI6IjEiLCJhY3JzIjpbInAxIl0sImFpbyI6IkFUUUJ5LzRiQUFBQUhHdXpMSHJVbS9ydVptLzkzWkNaSzBNd2gybkFETlZEYTdUQWpTbUN0b1dSQVpySHRsemFiY1Irc3RKTVpsQjkvbS9rZEs5RGxnM1Iwc3k5NURxeEdrMjkrUUtya1JzQU5yYzAzemcwZ3kyQTZ5RE1nM3dZYjVvVW5NQUc0czN5dG1yaUFXZ1krdHlwVlA5RjZRZGN0ck5wY01IVjdhZGlzMlBUVlNUSUU3OHZjQ0dRTHlsOStUaGdlcHA0NjVIZUQ0d0Myb2FaQXhFUUYyeHNpQW15SG9jMWVUWmV1VkFzZW1kZTUrTVpQLzE0b0hOZG8yZ2VKQTVKcXBrOU9tVGY2TUZOYmg0Y0RqTHY0bXpMRnJjaXRLMmh5ckQ1a0xiUjlCeHV0Uk43WlFxZEdBK1drTkhlV3hHNWZCekEvaE8wazZsY0YyQktrYkdhazlPc2l6cHpzTTk2WjMrdCtEYU5kWmRKR0pqdTY1ZE1ob1FYeHY4UDd3U05SMEhQazlnQVgzL0JMdkR1TU5HMzI3VDNHamlYd1E9PSIsImFsdHNlY2lkIjoiNTo6MTAwMzAwMDA4NUQzRDA1RiIsImFtciI6WyJmaWRvIiwicnNhIiwibWZhIl0sImFwcGlkIjoiMDRiMDc3OTUtOGRkYi00NjFhLWJiZWUtMDJmOWUxYmY3YjQ2IiwiYXBwaWRhY3IiOiIwIiwiZW1haWwiOiJtYWJhYmxlc0BtaWNyb3NvZnQuY29tIiwiZmFtaWx5X25hbWUiOiJCYWJsZXNod2FyIiwiZ2l2ZW5fbmFtZSI6Ik1hbm9qIiwiZ3JvdXBzIjpbIjMzNTlkN2E3LWI3MzQtNDhjMS05NzM3LTIzOGRjMDIyZWJiYyIsIjM0MDVmM2I4LWZlNjgtNDNlYS1hNDJlLTE1MDY4N2RhOTg4NSIsIjA1YTJlYzU3LTJjYjYtNGZlNC1iMWQ5LTczZjUxNWIxZDdlYiIsIjhhMzEzZTc0LTI2OTUtNDMyMi1iMmFjLTVjNmE0MGViZGMzNyIsIjU1NDIwOWMwLWM4NzYtNDdmMC1hMjJhLTExODUzYjM3M2E3ZSJdLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiMjAuMjM2LjEwLjY2IiwibmFtZSI6Ik1hbm9qIEJhYmxlc2h3YXIiLCJvaWQiOiJiMGEzODQwMS04NjNhLTRiZjAtYmUxOS05NjQ0YzFmMDc3Y2EiLCJwdWlkIjoiMTAwMzIwMDMyMzU1QkY3RiIsInJoIjoiMS5BVkVBbFNNcGY0LWd3RXl6MEtRQXNDT3cwa1pJZjNrQXV0ZFB1a1Bhd2ZqMk1CTWFBSnhSQUEuIiwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic2lkIjoiMDBiODBkNDktMzk2NS0zYmEwLTBkMWUtNWEzNTQwYjkyYTgzIiwic3ViIjoiNUR5dlBPWTBpaUdzeHZvR1B1MHZRLWRSb1BNU29VcWV1d2xBS1hSS2lEayIsInRpZCI6IjdmMjkyMzk1LWEwOGYtNGNjMC1iM2QwLWE0MDBiMDIzYjBkMiIsInVuaXF1ZV9uYW1lIjoibWFiYWJsZXNAbWljcm9zb2Z0LmNvbSIsInV0aSI6InFsSmRRdGVXMjBpOHBlalRsMWtOQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbImFjNDM0MzA3LTEyYjktNGZhMS1hNzA4LTg4YmY1OGNhYWJjMSIsIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfYWN0X2ZjdCI6IjMgNSIsInhtc19lZG92Ijp0cnVlLCJ4bXNfZnRkIjoiM0IxNzN6YXZyUi1aWThHRUlxQkk3eWRBTnFJZmNBbUZuaFFFUU9jZmR6TUJkWE5sWVhOMExXUnpiWE0iLCJ4bXNfaWRyZWwiOiIyMCAxIiwieG1zX3N1Yl9mY3QiOiIzIDEwIiwieG1zX3RjZHQiOjE3MDE4MTc3ODh9.nFkuh-1BxaIVdrpW2iicYMRjSf0y6TDuSimfw6XiO2wrL52NNaZzMz5LXO0zz9OqzfUaa0egsMdnTf70fYAegB0U3yY7GdyXFvpaqah0lMXcakgHmOc-1KFs5QGUc1sj3_P_7dDCl680EPd22RtzN0sCmDBw6UsqOQTWif-lrHFR1kYQGcHVemzu8Hhy6ffLy1te5ywChlh9RFljAMjjIHtbBjLJZvZ31u5PIISPiuiheeZLuuO7njecHOWlA2fsS-gVA2gKGloPUo-Z0Og-9wB9998O29y-uDOYAXGguWzzjSTcFyoIJrGa-uD-ULNkwmogOFKHzFOChNr9LSSSRg'
+Request body:
+This request has no body
+DEBUG: urllib3.connectionpool: Starting new HTTPS connection (1): cert-eastus2.experiments.azureml.net:443
+DEBUG: urllib3.connectionpool: https://cert-eastus2.experiments.azureml.net:443 "GET /mferp/managementfrontend/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/1?api-version=2021-10-01-dataplanepreview HTTP/1.1" 200 None
+DEBUG: azure.core.pipeline.policies._universal: Response status: '200'
+Response headers:
+    'Date': 'Tue, 21 Apr 2026 16:07:01 GMT'
+    'Content-Type': 'application/json; charset=utf-8'
+    'Transfer-Encoding': 'chunked'
+    'Connection': 'keep-alive'
+    'Vary': 'Accept-Encoding'
+    'Request-Context': 'appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d'
+    'x-ms-response-type': 'standard'
+    'mise-correlation-id': '15a85a8a-a710-43f8-897f-ef8697432993'
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    'X-Content-Type-Options': 'nosniff'
+    'azureml-served-by-cluster': 'vienna-eastus2-02'
+    'x-request-time': '0.164'
+    'Content-Encoding': 'gzip'
+Response content:
+{
+  "id": "azureml://registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/1",
+  "name": "google--gemma-4-31b-it",
+  "type": "models",
+  "properties": {
+    "description": "google--gemma-4-31b-it with deployment template v1  -- azcopy upload",
+    "tags": {
+      "source": "huggingface",
+      "hf_model_id": "google/gemma-4-31B-it",
+      "framework": "transformers"
+    },
+    "properties": {
+      "modelManifestPathOrUri": "/mabables-r-891b3cb4-b277-5dcc-ae5b-dfefc6816208/manifest.base.json"
+    },
+    "isArchived": false,
+    "isAnonymous": false,
+    "flavors": {},
+    "modelType": "custom_model",
+    "modelUri": "https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b",
+    "originAssetId": null,
+    "jobName": null,
+    "intellectualProperty": null,
+    "defaultDeploymentTemplate": {
+      "assetId": "azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/1"
+    },
+    "system_metadata": {
+      "invisibleUntil": null,
+      "playgroundRateLimitTier": null,
+      "platformCapabilities": null,
+      "supportedComputes": null,
+      "tasks": null,
+      "deprecation": null,
+      "featured": null,
+      "preview": null,
+      "benchmark": null,
+      "datasets": null,
+      "industry": null,
+      "keywords": null,
+      "licenseDescription": null,
+      "trainingDataDate": null,
+      "evaluation": null,
+      "notes": null,
+      "modelArchitecture": null,
+      "componentVersion": null,
+      "modelPath": null,
+      "aotManifest": null,
+      "hasDeltaWeights": null,
+      "maapSurcharge": null,
+      "maapSurchargeType": null,
+      "isCustomerInfoRequired": null,
+      "fineTuneOnlyModel": null,
+      "modelFlavor": null,
+      "lifecycle": null,
+      "links": null,
+      "foundryLocal": null,
+      "directoryPath": null,
+      "alias": null,
+      "promptTemplate": null,
+      "parameterSchema": null,
+      "supportsToolCalling": null,
+      "toolCallStart": null,
+      "toolCallEnd": null,
+      "toolRegisterStart": null,
+      "toolRegisterEnd": null,
+      "toolResponseStart": null,
+      "toolResponseEnd": null,
+      "skuToNumReplicasMap": null,
+      "openmmlabModelId": null,
+      "mlflowFlavor": null,
+      "publisher": null,
+      "author": null,
+      "license": null,
+      "summary": null,
+      "displayName": null,
+      "languages": null,
+      "textContextWindow": null,
+      "maxOutputTokens": null,
+      "inputModalities": null,
+      "outputModalities": null,
+      "modelCapabilities": null,
+      "baseModelWeightsVersion": null,
+      "SKU": null,
+      "sharedComputeCapacityEnabled": null,
+      "freePlayground": null,
+      "deploymentOptions": null,
+      "inferenceSupportedEnvs": null,
+      "isDirectFromAzure": null,
+      "inferenceEnvironmentAssetId": null,
+      "maasFinetuning": null,
+      "featureFlags": null,
+      "architecture": null,
+      "parameterCount": null,
+      "terms": null,
+      "softwareRequirements": null,
+      "trademarkInformation": null,
+      "contactInformation": null,
+      "reportingMechanisms": null,
+      "trainingInformation": null,
+      "azureOffers": null,
+      "modalitiesSupported": null,
+      "endpointsSupported": null,
+      "featuresSupported": null,
+      "toolsSupported": null
+    }
+  },
+  "systemData": {
+    "createdAt": "2026-04-18T22:30:02.0617667+00:00",
+    "createdBy": "Manoj Bableshwar",
+    "createdByType": "User",
+    "lastModifiedAt": "2026-04-21T16:06:51.8101792+00:00",
+    "lastModifiedBy": "Manoj Bableshwar",
+    "lastModifiedByType": "User"
+  }
+}
+Class DefaultDeploymentTemplateSchema: This is an experimental class, and may change at any time. Please see https://aka.ms/azuremlexperimental for more information.
+DEBUG: cli.azure.cli.core.commands.client_factory: Getting management service client client_type=AzureMachineLearningWorkspaces
+DEBUG: urllib3.util.retry: Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+DEBUG: msal.authority: Initializing with Entra authority: https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2
+DEBUG: msal.authority: openid_config("https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/v2.0/.well-known/openid-configuration") = {'token_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/token', 'token_endpoint_auth_methods_supported': ['client_secret_post', 'private_key_jwt', 'client_secret_basic', 'self_signed_tls_client_auth'], 'jwks_uri': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/discovery/v2.0/keys', 'response_modes_supported': ['query', 'fragment', 'form_post'], 'subject_types_supported': ['pairwise'], 'id_token_signing_alg_values_supported': ['RS256'], 'response_types_supported': ['code', 'id_token', 'code id_token', 'id_token token'], 'scopes_supported': ['openid', 'profile', 'email', 'offline_access'], 'request_uri_parameter_supported': False, 'userinfo_endpoint': 'https://graph.microsoft.com/oidc/userinfo', 'authorization_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/authorize', 'device_authorization_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/devicecode', 'http_logout_supported': True, 'frontchannel_logout_supported': True, 'end_session_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/logout', 'claims_supported': ['sub', 'iss', 'cloud_instance_name', 'cloud_instance_host_name', 'cloud_graph_host_name', 'msgraph_host', 'aud', 'exp', 'iat', 'auth_time', 'acr', 'nonce', 'preferred_username', 'name', 'tid', 'ver', 'at_hash', 'c_hash', 'email'], 'kerberos_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/kerberos', 'mtls_endpoint_aliases': {'token_endpoint': 'https://mtlsauth.microsoft.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/token'}, 'tls_client_certificate_bound_access_tokens': True, 'tenant_region_scope': 'NA', 'cloud_instance_name': 'microsoftonline.com', 'cloud_graph_host_name': 'graph.windows.net', 'msgraph_host': 'graph.microsoft.com', 'rbac_url': 'https://pas.windows.net'}
+DEBUG: msal.application: Broker enabled? None
+DEBUG: cli.azure.cli.core.util: invalid decimal literal (<unknown>, line 1)
+DEBUG: cli.azure.cli.core.commands.client_factory: Getting management service client client_type=_ml_client_cli
+DEBUG: urllib3.util.retry: Converted retries value: 1 -> Retry(total=1, connect=None, read=None, redirect=None, status=None)
+DEBUG: msal.authority: Initializing with Entra authority: https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2
+DEBUG: msal.authority: openid_config("https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/v2.0/.well-known/openid-configuration") = {'token_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/token', 'token_endpoint_auth_methods_supported': ['client_secret_post', 'private_key_jwt', 'client_secret_basic', 'self_signed_tls_client_auth'], 'jwks_uri': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/discovery/v2.0/keys', 'response_modes_supported': ['query', 'fragment', 'form_post'], 'subject_types_supported': ['pairwise'], 'id_token_signing_alg_values_supported': ['RS256'], 'response_types_supported': ['code', 'id_token', 'code id_token', 'id_token token'], 'scopes_supported': ['openid', 'profile', 'email', 'offline_access'], 'request_uri_parameter_supported': False, 'userinfo_endpoint': 'https://graph.microsoft.com/oidc/userinfo', 'authorization_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/authorize', 'device_authorization_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/devicecode', 'http_logout_supported': True, 'frontchannel_logout_supported': True, 'end_session_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/logout', 'claims_supported': ['sub', 'iss', 'cloud_instance_name', 'cloud_instance_host_name', 'cloud_graph_host_name', 'msgraph_host', 'aud', 'exp', 'iat', 'auth_time', 'acr', 'nonce', 'preferred_username', 'name', 'tid', 'ver', 'at_hash', 'c_hash', 'email'], 'kerberos_endpoint': 'https://login.microsoftonline.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/kerberos', 'mtls_endpoint_aliases': {'token_endpoint': 'https://mtlsauth.microsoft.com/7f292395-a08f-4cc0-b3d0-a400b023b0d2/oauth2/v2.0/token'}, 'tls_client_certificate_bound_access_tokens': True, 'tenant_region_scope': 'NA', 'cloud_instance_name': 'microsoftonline.com', 'cloud_graph_host_name': 'graph.windows.net', 'msgraph_host': 'graph.microsoft.com', 'rbac_url': 'https://pas.windows.net'}
+DEBUG: msal.application: Broker enabled? None
+DEBUG: cli.azure.cli.core.auth.credential_adaptor: CredentialAdaptor.get_token_info: scopes=('https://management.azure.com/.default',), options={}
+DEBUG: cli.azure.cli.core.auth.msal_credentials: UserCredential.acquire_token: scopes=['https://management.azure.com/.default'], claims_challenge=None, kwargs={}
+DEBUG: msal.application: Cache hit an AT
+DEBUG: msal.telemetry: Generate or reuse correlation_id: f311e40a-871b-45d1-9c1b-ba9454239d2b
+DEBUG: azure.core.pipeline.policies._universal: Request URL: 'https://eastus.api.azureml.ms/registrymanagement/v1.0/registries/mabables-reg-feb26/discovery'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json, text/json'
+    'x-ms-client-request-id': '1fd110dc-3d9c-11f1-a979-02ab29fa3d86'
+    'User-Agent': 'azureml-cli-v2/2.38.1 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.13.13 (macOS-15.7.5-arm64-arm-64bit-Mach-O)'
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCIsImtpZCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvN2YyOTIzOTUtYTA4Zi00Y2MwLWIzZDAtYTQwMGIwMjNiMGQyLyIsImlhdCI6MTc3Njc4NDY0OSwibmJmIjoxNzc2Nzg0NjQ5LCJleHAiOjE3NzY3ODkyMzgsImFjciI6IjEiLCJhY3JzIjpbInAxIl0sImFpbyI6IkFUUUJ5LzRiQUFBQUhHdXpMSHJVbS9ydVptLzkzWkNaSzBNd2gybkFETlZEYTdUQWpTbUN0b1dSQVpySHRsemFiY1Irc3RKTVpsQjkvbS9rZEs5RGxnM1Iwc3k5NURxeEdrMjkrUUtya1JzQU5yYzAzemcwZ3kyQTZ5RE1nM3dZYjVvVW5NQUc0czN5dG1yaUFXZ1krdHlwVlA5RjZRZGN0ck5wY01IVjdhZGlzMlBUVlNUSUU3OHZjQ0dRTHlsOStUaGdlcHA0NjVIZUQ0d0Myb2FaQXhFUUYyeHNpQW15SG9jMWVUWmV1VkFzZW1kZTUrTVpQLzE0b0hOZG8yZ2VKQTVKcXBrOU9tVGY2TUZOYmg0Y0RqTHY0bXpMRnJjaXRLMmh5ckQ1a0xiUjlCeHV0Uk43WlFxZEdBK1drTkhlV3hHNWZCekEvaE8wazZsY0YyQktrYkdhazlPc2l6cHpzTTk2WjMrdCtEYU5kWmRKR0pqdTY1ZE1ob1FYeHY4UDd3U05SMEhQazlnQVgzL0JMdkR1TU5HMzI3VDNHamlYd1E9PSIsImFsdHNlY2lkIjoiNTo6MTAwMzAwMDA4NUQzRDA1RiIsImFtciI6WyJmaWRvIiwicnNhIiwibWZhIl0sImFwcGlkIjoiMDRiMDc3OTUtOGRkYi00NjFhLWJiZWUtMDJmOWUxYmY3YjQ2IiwiYXBwaWRhY3IiOiIwIiwiZW1haWwiOiJtYWJhYmxlc0BtaWNyb3NvZnQuY29tIiwiZmFtaWx5X25hbWUiOiJCYWJsZXNod2FyIiwiZ2l2ZW5fbmFtZSI6Ik1hbm9qIiwiZ3JvdXBzIjpbIjMzNTlkN2E3LWI3MzQtNDhjMS05NzM3LTIzOGRjMDIyZWJiYyIsIjM0MDVmM2I4LWZlNjgtNDNlYS1hNDJlLTE1MDY4N2RhOTg4NSIsIjA1YTJlYzU3LTJjYjYtNGZlNC1iMWQ5LTczZjUxNWIxZDdlYiIsIjhhMzEzZTc0LTI2OTUtNDMyMi1iMmFjLTVjNmE0MGViZGMzNyIsIjU1NDIwOWMwLWM4NzYtNDdmMC1hMjJhLTExODUzYjM3M2E3ZSJdLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiMjAuMjM2LjEwLjY2IiwibmFtZSI6Ik1hbm9qIEJhYmxlc2h3YXIiLCJvaWQiOiJiMGEzODQwMS04NjNhLTRiZjAtYmUxOS05NjQ0YzFmMDc3Y2EiLCJwdWlkIjoiMTAwMzIwMDMyMzU1QkY3RiIsInJoIjoiMS5BVkVBbFNNcGY0LWd3RXl6MEtRQXNDT3cwa1pJZjNrQXV0ZFB1a1Bhd2ZqMk1CTWFBSnhSQUEuIiwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic2lkIjoiMDBiODBkNDktMzk2NS0zYmEwLTBkMWUtNWEzNTQwYjkyYTgzIiwic3ViIjoiNUR5dlBPWTBpaUdzeHZvR1B1MHZRLWRSb1BNU29VcWV1d2xBS1hSS2lEayIsInRpZCI6IjdmMjkyMzk1LWEwOGYtNGNjMC1iM2QwLWE0MDBiMDIzYjBkMiIsInVuaXF1ZV9uYW1lIjoibWFiYWJsZXNAbWljcm9zb2Z0LmNvbSIsInV0aSI6InFsSmRRdGVXMjBpOHBlalRsMWtOQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbImFjNDM0MzA3LTEyYjktNGZhMS1hNzA4LTg4YmY1OGNhYWJjMSIsIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfYWN0X2ZjdCI6IjMgNSIsInhtc19lZG92Ijp0cnVlLCJ4bXNfZnRkIjoiM0IxNzN6YXZyUi1aWThHRUlxQkk3eWRBTnFJZmNBbUZuaFFFUU9jZmR6TUJkWE5sWVhOMExXUnpiWE0iLCJ4bXNfaWRyZWwiOiIyMCAxIiwieG1zX3N1Yl9mY3QiOiIzIDEwIiwieG1zX3RjZHQiOjE3MDE4MTc3ODh9.nFkuh-1BxaIVdrpW2iicYMRjSf0y6TDuSimfw6XiO2wrL52NNaZzMz5LXO0zz9OqzfUaa0egsMdnTf70fYAegB0U3yY7GdyXFvpaqah0lMXcakgHmOc-1KFs5QGUc1sj3_P_7dDCl680EPd22RtzN0sCmDBw6UsqOQTWif-lrHFR1kYQGcHVemzu8Hhy6ffLy1te5ywChlh9RFljAMjjIHtbBjLJZvZ31u5PIISPiuiheeZLuuO7njecHOWlA2fsS-gVA2gKGloPUo-Z0Og-9wB9998O29y-uDOYAXGguWzzjSTcFyoIJrGa-uD-ULNkwmogOFKHzFOChNr9LSSSRg'
+Request body:
+This request has no body
+DEBUG: urllib3.connectionpool: Starting new HTTPS connection (1): eastus.api.azureml.ms:443
+DEBUG: urllib3.connectionpool: https://eastus.api.azureml.ms:443 "GET /registrymanagement/v1.0/registries/mabables-reg-feb26/discovery HTTP/1.1" 200 None
+DEBUG: azure.core.pipeline.policies._universal: Response status: '200'
+Response headers:
+    'Date': 'Tue, 21 Apr 2026 16:07:01 GMT'
+    'Content-Type': 'application/json; charset=utf-8'
+    'Transfer-Encoding': 'chunked'
+    'Connection': 'keep-alive'
+    'Vary': 'Accept-Encoding'
+    'Request-Context': 'appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d'
+    'x-ms-response-type': 'standard'
+    'mise-correlation-id': '52bc2894-fa30-4e3b-98b0-176bf115393c'
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    'X-Content-Type-Options': 'nosniff'
+    'azureml-served-by-cluster': 'vienna-eastus-01'
+    'x-request-time': '0.024'
+    'Content-Encoding': 'gzip'
+Response content:
+{
+  "registryId": "2a830832-2f41-4c41-b9bb-794a353e209a",
+  "registryName": "mabables-reg-feb26",
+  "tenantId": "7f292395-a08f-4cc0-b3d0-a400b023b0d2",
+  "primaryRegion": "eastus2",
+  "regions": [
+    "eastus2"
+  ],
+  "subscriptionId": "75703df0-38f9-4e2e-8328-45f6fc810286",
+  "resourceGroup": "mabables-rg",
+  "workspaceName": null,
+  "primaryRegionResourceProviderUri": "https://cert-eastus2.experiments.azureml.net/",
+  "registryFqdns": {
+    "eastus2": {
+      "uri": "https://eastus2.api.azureml.ms"
+    }
+  },
+  "intellectualPropertyPublisher": null,
+  "isTradeRestricted": false
+}
+Class DefaultDeploymentTemplate: This is an experimental class, and may change at any time. Please see https://aka.ms/azuremlexperimental for more information.
+DEBUG: cli.azure.cli.core.auth.credential_adaptor: CredentialAdaptor.get_token_info: scopes=('https://management.azure.com/.default',), options={}
+DEBUG: cli.azure.cli.core.auth.msal_credentials: UserCredential.acquire_token: scopes=['https://management.azure.com/.default'], claims_challenge=None, kwargs={}
+DEBUG: msal.application: Cache hit an AT
+DEBUG: msal.telemetry: Generate or reuse correlation_id: 90f84ba3-f1f5-4de9-9ad9-a2c508fccd39
+DEBUG: azure.core.pipeline.policies._universal: Request URL: 'https://cert-eastus2.experiments.azureml.net/mferp/managementfrontend/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions?api-version=2021-10-01-dataplanepreview&$orderBy=createdtime%20desc&$top=1'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'x-ms-client-request-id': '1fd110dc-3d9c-11f1-a979-02ab29fa3d86'
+    'User-Agent': 'azureml-cli-v2/2.38.1 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.13.13 (macOS-15.7.5-arm64-arm-64bit-Mach-O)'
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCIsImtpZCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvN2YyOTIzOTUtYTA4Zi00Y2MwLWIzZDAtYTQwMGIwMjNiMGQyLyIsImlhdCI6MTc3Njc4NDY0OSwibmJmIjoxNzc2Nzg0NjQ5LCJleHAiOjE3NzY3ODkyMzgsImFjciI6IjEiLCJhY3JzIjpbInAxIl0sImFpbyI6IkFUUUJ5LzRiQUFBQUhHdXpMSHJVbS9ydVptLzkzWkNaSzBNd2gybkFETlZEYTdUQWpTbUN0b1dSQVpySHRsemFiY1Irc3RKTVpsQjkvbS9rZEs5RGxnM1Iwc3k5NURxeEdrMjkrUUtya1JzQU5yYzAzemcwZ3kyQTZ5RE1nM3dZYjVvVW5NQUc0czN5dG1yaUFXZ1krdHlwVlA5RjZRZGN0ck5wY01IVjdhZGlzMlBUVlNUSUU3OHZjQ0dRTHlsOStUaGdlcHA0NjVIZUQ0d0Myb2FaQXhFUUYyeHNpQW15SG9jMWVUWmV1VkFzZW1kZTUrTVpQLzE0b0hOZG8yZ2VKQTVKcXBrOU9tVGY2TUZOYmg0Y0RqTHY0bXpMRnJjaXRLMmh5ckQ1a0xiUjlCeHV0Uk43WlFxZEdBK1drTkhlV3hHNWZCekEvaE8wazZsY0YyQktrYkdhazlPc2l6cHpzTTk2WjMrdCtEYU5kWmRKR0pqdTY1ZE1ob1FYeHY4UDd3U05SMEhQazlnQVgzL0JMdkR1TU5HMzI3VDNHamlYd1E9PSIsImFsdHNlY2lkIjoiNTo6MTAwMzAwMDA4NUQzRDA1RiIsImFtciI6WyJmaWRvIiwicnNhIiwibWZhIl0sImFwcGlkIjoiMDRiMDc3OTUtOGRkYi00NjFhLWJiZWUtMDJmOWUxYmY3YjQ2IiwiYXBwaWRhY3IiOiIwIiwiZW1haWwiOiJtYWJhYmxlc0BtaWNyb3NvZnQuY29tIiwiZmFtaWx5X25hbWUiOiJCYWJsZXNod2FyIiwiZ2l2ZW5fbmFtZSI6Ik1hbm9qIiwiZ3JvdXBzIjpbIjMzNTlkN2E3LWI3MzQtNDhjMS05NzM3LTIzOGRjMDIyZWJiYyIsIjM0MDVmM2I4LWZlNjgtNDNlYS1hNDJlLTE1MDY4N2RhOTg4NSIsIjA1YTJlYzU3LTJjYjYtNGZlNC1iMWQ5LTczZjUxNWIxZDdlYiIsIjhhMzEzZTc0LTI2OTUtNDMyMi1iMmFjLTVjNmE0MGViZGMzNyIsIjU1NDIwOWMwLWM4NzYtNDdmMC1hMjJhLTExODUzYjM3M2E3ZSJdLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiMjAuMjM2LjEwLjY2IiwibmFtZSI6Ik1hbm9qIEJhYmxlc2h3YXIiLCJvaWQiOiJiMGEzODQwMS04NjNhLTRiZjAtYmUxOS05NjQ0YzFmMDc3Y2EiLCJwdWlkIjoiMTAwMzIwMDMyMzU1QkY3RiIsInJoIjoiMS5BVkVBbFNNcGY0LWd3RXl6MEtRQXNDT3cwa1pJZjNrQXV0ZFB1a1Bhd2ZqMk1CTWFBSnhSQUEuIiwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic2lkIjoiMDBiODBkNDktMzk2NS0zYmEwLTBkMWUtNWEzNTQwYjkyYTgzIiwic3ViIjoiNUR5dlBPWTBpaUdzeHZvR1B1MHZRLWRSb1BNU29VcWV1d2xBS1hSS2lEayIsInRpZCI6IjdmMjkyMzk1LWEwOGYtNGNjMC1iM2QwLWE0MDBiMDIzYjBkMiIsInVuaXF1ZV9uYW1lIjoibWFiYWJsZXNAbWljcm9zb2Z0LmNvbSIsInV0aSI6InFsSmRRdGVXMjBpOHBlalRsMWtOQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbImFjNDM0MzA3LTEyYjktNGZhMS1hNzA4LTg4YmY1OGNhYWJjMSIsIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfYWN0X2ZjdCI6IjMgNSIsInhtc19lZG92Ijp0cnVlLCJ4bXNfZnRkIjoiM0IxNzN6YXZyUi1aWThHRUlxQkk3eWRBTnFJZmNBbUZuaFFFUU9jZmR6TUJkWE5sWVhOMExXUnpiWE0iLCJ4bXNfaWRyZWwiOiIyMCAxIiwieG1zX3N1Yl9mY3QiOiIzIDEwIiwieG1zX3RjZHQiOjE3MDE4MTc3ODh9.nFkuh-1BxaIVdrpW2iicYMRjSf0y6TDuSimfw6XiO2wrL52NNaZzMz5LXO0zz9OqzfUaa0egsMdnTf70fYAegB0U3yY7GdyXFvpaqah0lMXcakgHmOc-1KFs5QGUc1sj3_P_7dDCl680EPd22RtzN0sCmDBw6UsqOQTWif-lrHFR1kYQGcHVemzu8Hhy6ffLy1te5ywChlh9RFljAMjjIHtbBjLJZvZ31u5PIISPiuiheeZLuuO7njecHOWlA2fsS-gVA2gKGloPUo-Z0Og-9wB9998O29y-uDOYAXGguWzzjSTcFyoIJrGa-uD-ULNkwmogOFKHzFOChNr9LSSSRg'
+Request body:
+This request has no body
+DEBUG: urllib3.connectionpool: Starting new HTTPS connection (1): cert-eastus2.experiments.azureml.net:443
+DEBUG: urllib3.connectionpool: https://cert-eastus2.experiments.azureml.net:443 "GET /mferp/managementfrontend/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions?api-version=2021-10-01-dataplanepreview&$orderBy=createdtime%20desc&$top=1 HTTP/1.1" 200 None
+DEBUG: azure.core.pipeline.policies._universal: Response status: '200'
+Response headers:
+    'Date': 'Tue, 21 Apr 2026 16:07:02 GMT'
+    'Content-Type': 'application/json; charset=utf-8'
+    'Transfer-Encoding': 'chunked'
+    'Connection': 'keep-alive'
+    'Vary': 'Accept-Encoding'
+    'Request-Context': 'appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d'
+    'x-ms-response-type': 'standard'
+    'mise-correlation-id': 'd9fceb95-8eb6-4494-9325-f791914e03e8'
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    'X-Content-Type-Options': 'nosniff'
+    'azureml-served-by-cluster': 'vienna-eastus2-02'
+    'x-request-time': '0.131'
+    'Content-Encoding': 'gzip'
+Response content:
+{
+  "value": [
+    {
+      "id": "azureml://registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/6",
+      "name": "google--gemma-4-31b-it",
+      "type": "models",
+      "properties": {
+        "description": "google--gemma-4-31b-it with deployment template v6  -- azcopy upload",
+        "tags": {
+          "source": "huggingface",
+          "hf_model_id": "google/gemma-4-31B-it",
+          "framework": "transformers"
+        },
+        "properties": {
+          "modelManifestPathOrUri": "/mabables-r-aa2cdf65-a16d-5854-8c26-63727ec80b4c/manifest.base.json"
+        },
+        "isArchived": false,
+        "isAnonymous": false,
+        "flavors": {},
+        "modelType": "custom_model",
+        "modelUri": "https://6ec5159fc0c.blob.core.windows.net/mabables-r-29d9ce8c-0cde-51ba-a989-d56b156f98f2",
+        "originAssetId": null,
+        "jobName": null,
+        "intellectualProperty": null,
+        "defaultDeploymentTemplate": {
+          "assetId": null
+        }
+      },
+      "systemData": {
+        "createdAt": "2026-04-20T07:04:22.6400652+00:00",
+        "createdBy": "Manoj Bableshwar",
+        "createdByType": "User",
+        "lastModifiedAt": "2026-04-21T16:07:02.0299191+00:00",
+        "lastModifiedBy": "Manoj Bableshwar",
+        "lastModifiedByType": "User"
+      }
+    },
+    {
+      "id": "azureml://registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/2",
+      "name": "google--gemma-4-31b-it",
+      "type": "models",
+      "properties": {
+        "description": "google--gemma-4-31b-it with deployment template v2  -- azcopy upload",
+        "tags": {
+          "source": "huggingface",
+          "hf_model_id": "google/gemma-4-31B-it",
+          "framework": "transformers"
+        },
+        "properties": {
+          "modelManifestPathOrUri": "/mabables-r-6496f4ae-34b8-5159-b6e3-3f0e92e0506d/manifest.base.json"
+        },
+        "isArchived": false,
+        "isAnonymous": false,
+        "flavors": {},
+        "modelType": "custom_model",
+        "modelUri": "https://6ec5159fc0c.blob.core.windows.net/mabables-r-f53f55fa-6704-5b0a-8354-518383d00bbd",
+        "originAssetId": null,
+        "jobName": null,
+        "intellectualProperty": null,
+        "defaultDeploymentTemplate": {
+          "assetId": null
+        }
+      },
+      "systemData": {
+        "createdAt": "2026-04-19T09:03:36.736202+00:00",
+        "createdBy": "Manoj Bableshwar",
+        "createdByType": "User",
+        "lastModifiedAt": "2026-04-21T16:07:02.0299231+00:00",
+        "lastModifiedBy": "Manoj Bableshwar",
+        "lastModifiedByType": "User"
+      }
+    },
+    {
+      "id": "azureml://registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/1",
+      "name": "google--gemma-4-31b-it",
+      "type": "models",
+      "properties": {
+        "description": "google--gemma-4-31b-it with deployment template v1  -- azcopy upload",
+        "tags": {
+          "source": "huggingface",
+          "hf_model_id": "google/gemma-4-31B-it",
+          "framework": "transformers"
+        },
+        "properties": {
+          "modelManifestPathOrUri": "/mabables-r-891b3cb4-b277-5dcc-ae5b-dfefc6816208/manifest.base.json"
+        },
+        "isArchived": false,
+        "isAnonymous": false,
+        "flavors": {},
+        "modelType": "custom_model",
+        "modelUri": "https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b",
+        "originAssetId": null,
+        "jobName": null,
+        "intellectualProperty": null,
+        "defaultDeploymentTemplate": {
+          "assetId": null
+        }
+      },
+      "systemData": {
+        "createdAt": "2026-04-18T22:30:02.0617667+00:00",
+        "createdBy": "Manoj Bableshwar",
+        "createdByType": "User",
+        "lastModifiedAt": "2026-04-21T16:07:02.0299237+00:00",
+        "lastModifiedBy": "Manoj Bableshwar",
+        "lastModifiedByType": "User"
+      }
+    }
+  ]
+}
+DEBUG: azure.core.pipeline.policies._universal: Request URL: 'https://cert-eastus2.experiments.azureml.net/mferp/managementfrontend/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/tempdatarefs/google--gemma-4-31b-it/versions/1?api-version=2021-10-01-dataplanepreview'
+Request method: 'PUT'
+Request headers:
+    'Content-Type': 'application/json'
+    'Content-Length': '151'
+    'Accept': 'application/json'
+    'x-ms-client-request-id': '1fd110dc-3d9c-11f1-a979-02ab29fa3d86'
+    'User-Agent': 'azureml-cli-v2/2.38.1 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.13.13 (macOS-15.7.5-arm64-arm-64bit-Mach-O)'
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCIsImtpZCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvN2YyOTIzOTUtYTA4Zi00Y2MwLWIzZDAtYTQwMGIwMjNiMGQyLyIsImlhdCI6MTc3Njc4NDY0OSwibmJmIjoxNzc2Nzg0NjQ5LCJleHAiOjE3NzY3ODkyMzgsImFjciI6IjEiLCJhY3JzIjpbInAxIl0sImFpbyI6IkFUUUJ5LzRiQUFBQUhHdXpMSHJVbS9ydVptLzkzWkNaSzBNd2gybkFETlZEYTdUQWpTbUN0b1dSQVpySHRsemFiY1Irc3RKTVpsQjkvbS9rZEs5RGxnM1Iwc3k5NURxeEdrMjkrUUtya1JzQU5yYzAzemcwZ3kyQTZ5RE1nM3dZYjVvVW5NQUc0czN5dG1yaUFXZ1krdHlwVlA5RjZRZGN0ck5wY01IVjdhZGlzMlBUVlNUSUU3OHZjQ0dRTHlsOStUaGdlcHA0NjVIZUQ0d0Myb2FaQXhFUUYyeHNpQW15SG9jMWVUWmV1VkFzZW1kZTUrTVpQLzE0b0hOZG8yZ2VKQTVKcXBrOU9tVGY2TUZOYmg0Y0RqTHY0bXpMRnJjaXRLMmh5ckQ1a0xiUjlCeHV0Uk43WlFxZEdBK1drTkhlV3hHNWZCekEvaE8wazZsY0YyQktrYkdhazlPc2l6cHpzTTk2WjMrdCtEYU5kWmRKR0pqdTY1ZE1ob1FYeHY4UDd3U05SMEhQazlnQVgzL0JMdkR1TU5HMzI3VDNHamlYd1E9PSIsImFsdHNlY2lkIjoiNTo6MTAwMzAwMDA4NUQzRDA1RiIsImFtciI6WyJmaWRvIiwicnNhIiwibWZhIl0sImFwcGlkIjoiMDRiMDc3OTUtOGRkYi00NjFhLWJiZWUtMDJmOWUxYmY3YjQ2IiwiYXBwaWRhY3IiOiIwIiwiZW1haWwiOiJtYWJhYmxlc0BtaWNyb3NvZnQuY29tIiwiZmFtaWx5X25hbWUiOiJCYWJsZXNod2FyIiwiZ2l2ZW5fbmFtZSI6Ik1hbm9qIiwiZ3JvdXBzIjpbIjMzNTlkN2E3LWI3MzQtNDhjMS05NzM3LTIzOGRjMDIyZWJiYyIsIjM0MDVmM2I4LWZlNjgtNDNlYS1hNDJlLTE1MDY4N2RhOTg4NSIsIjA1YTJlYzU3LTJjYjYtNGZlNC1iMWQ5LTczZjUxNWIxZDdlYiIsIjhhMzEzZTc0LTI2OTUtNDMyMi1iMmFjLTVjNmE0MGViZGMzNyIsIjU1NDIwOWMwLWM4NzYtNDdmMC1hMjJhLTExODUzYjM3M2E3ZSJdLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiMjAuMjM2LjEwLjY2IiwibmFtZSI6Ik1hbm9qIEJhYmxlc2h3YXIiLCJvaWQiOiJiMGEzODQwMS04NjNhLTRiZjAtYmUxOS05NjQ0YzFmMDc3Y2EiLCJwdWlkIjoiMTAwMzIwMDMyMzU1QkY3RiIsInJoIjoiMS5BVkVBbFNNcGY0LWd3RXl6MEtRQXNDT3cwa1pJZjNrQXV0ZFB1a1Bhd2ZqMk1CTWFBSnhSQUEuIiwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic2lkIjoiMDBiODBkNDktMzk2NS0zYmEwLTBkMWUtNWEzNTQwYjkyYTgzIiwic3ViIjoiNUR5dlBPWTBpaUdzeHZvR1B1MHZRLWRSb1BNU29VcWV1d2xBS1hSS2lEayIsInRpZCI6IjdmMjkyMzk1LWEwOGYtNGNjMC1iM2QwLWE0MDBiMDIzYjBkMiIsInVuaXF1ZV9uYW1lIjoibWFiYWJsZXNAbWljcm9zb2Z0LmNvbSIsInV0aSI6InFsSmRRdGVXMjBpOHBlalRsMWtOQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbImFjNDM0MzA3LTEyYjktNGZhMS1hNzA4LTg4YmY1OGNhYWJjMSIsIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfYWN0X2ZjdCI6IjMgNSIsInhtc19lZG92Ijp0cnVlLCJ4bXNfZnRkIjoiM0IxNzN6YXZyUi1aWThHRUlxQkk3eWRBTnFJZmNBbUZuaFFFUU9jZmR6TUJkWE5sWVhOMExXUnpiWE0iLCJ4bXNfaWRyZWwiOiIyMCAxIiwieG1zX3N1Yl9mY3QiOiIzIDEwIiwieG1zX3RjZHQiOjE3MDE4MTc3ODh9.nFkuh-1BxaIVdrpW2iicYMRjSf0y6TDuSimfw6XiO2wrL52NNaZzMz5LXO0zz9OqzfUaa0egsMdnTf70fYAegB0U3yY7GdyXFvpaqah0lMXcakgHmOc-1KFs5QGUc1sj3_P_7dDCl680EPd22RtzN0sCmDBw6UsqOQTWif-lrHFR1kYQGcHVemzu8Hhy6ffLy1te5ywChlh9RFljAMjjIHtbBjLJZvZ31u5PIISPiuiheeZLuuO7njecHOWlA2fsS-gVA2gKGloPUo-Z0Og-9wB9998O29y-uDOYAXGguWzzjSTcFyoIJrGa-uD-ULNkwmogOFKHzFOChNr9LSSSRg'
+Request body:
+{"assetId": "azureml://registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/1", "temporaryDataReferenceType": "TemporaryBlobReference"}
+DEBUG: urllib3.connectionpool: https://cert-eastus2.experiments.azureml.net:443 "PUT /mferp/managementfrontend/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/tempdatarefs/google--gemma-4-31b-it/versions/1?api-version=2021-10-01-dataplanepreview HTTP/1.1" 409 1206
+DEBUG: azure.core.pipeline.policies._universal: Response status: '409'
+Response headers:
+    'Date': 'Tue, 21 Apr 2026 16:07:02 GMT'
+    'Content-Type': 'application/json; charset=utf-8'
+    'Content-Length': '1206'
+    'Connection': 'keep-alive'
+    'Request-Context': 'appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d'
+    'x-ms-response-type': 'error'
+    'mise-correlation-id': '299a7e5d-17a2-4975-8d98-ff2a8d790f82'
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    'X-Content-Type-Options': 'nosniff'
+    'azureml-served-by-cluster': 'vienna-eastus2-02'
+    'x-request-time': '0.068'
+Response content:
+{
+  "error": {
+    "code": "UserError",
+    "message": "Asset azureml://registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/1 already exists, cannot create new temporary data references for it",
+    "details": [],
+    "additionalInfo": [
+      {
+        "type": "ComponentName",
+        "info": {
+          "value": "managementfrontend"
+        }
+      },
+      {
+        "type": "Correlation",
+        "info": {
+          "value": {
+            "operation": "6f3d5531103144ddf045a9168ae18d2f",
+            "request": "f59299ea213ea579"
+          }
+        }
+      },
+      {
+        "type": "Environment",
+        "info": {
+          "value": "eastus2"
+        }
+      },
+      {
+        "type": "Location",
+        "info": {
+          "value": "eastus2"
+        }
+      },
+      {
+        "type": "Time",
+        "info": {
+          "value": "2026-04-21T16:07:02.2471153+00:00"
+        }
+      },
+      {
+        "type": "InnerError",
+        "info": {
+          "value": {
+            "code": "Conflict",
+            "innerError": {
+              "code": "TemporaryDataReferencesForExistingAsset",
+              "innerError": null
+            }
+          }
+        }
+      }
+    ]
+  }
+}
+WARNING: msrest.serialization: stage is not a known attribute of class <class 'azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models._models_py3.ModelVersionDetails'> and will be ignored
+DEBUG: cli.azure.cli.core.auth.credential_adaptor: CredentialAdaptor.get_token_info: scopes=('https://management.azure.com/.default',), options={}
+DEBUG: cli.azure.cli.core.auth.msal_credentials: UserCredential.acquire_token: scopes=['https://management.azure.com/.default'], claims_challenge=None, kwargs={}
+DEBUG: msal.application: Cache hit an AT
+DEBUG: msal.telemetry: Generate or reuse correlation_id: 8045e615-df6c-408c-aafb-1d548b28220b
+DEBUG: azure.core.pipeline.policies._universal: Request URL: 'https://cert-eastus2.experiments.azureml.net/mferp/managementfrontend/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/1?api-version=2021-10-01-dataplanepreview'
+Request method: 'PUT'
+Request headers:
+    'Content-Type': 'application/json'
+    'Content-Length': '666'
+    'Accept': 'application/json'
+    'x-ms-client-request-id': '1fd110dc-3d9c-11f1-a979-02ab29fa3d86'
+    'User-Agent': 'azureml-cli-v2/2.38.1 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.13.13 (macOS-15.7.5-arm64-arm-64bit-Mach-O)'
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCIsImtpZCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvN2YyOTIzOTUtYTA4Zi00Y2MwLWIzZDAtYTQwMGIwMjNiMGQyLyIsImlhdCI6MTc3Njc4NDY0OSwibmJmIjoxNzc2Nzg0NjQ5LCJleHAiOjE3NzY3ODkyMzgsImFjciI6IjEiLCJhY3JzIjpbInAxIl0sImFpbyI6IkFUUUJ5LzRiQUFBQUhHdXpMSHJVbS9ydVptLzkzWkNaSzBNd2gybkFETlZEYTdUQWpTbUN0b1dSQVpySHRsemFiY1Irc3RKTVpsQjkvbS9rZEs5RGxnM1Iwc3k5NURxeEdrMjkrUUtya1JzQU5yYzAzemcwZ3kyQTZ5RE1nM3dZYjVvVW5NQUc0czN5dG1yaUFXZ1krdHlwVlA5RjZRZGN0ck5wY01IVjdhZGlzMlBUVlNUSUU3OHZjQ0dRTHlsOStUaGdlcHA0NjVIZUQ0d0Myb2FaQXhFUUYyeHNpQW15SG9jMWVUWmV1VkFzZW1kZTUrTVpQLzE0b0hOZG8yZ2VKQTVKcXBrOU9tVGY2TUZOYmg0Y0RqTHY0bXpMRnJjaXRLMmh5ckQ1a0xiUjlCeHV0Uk43WlFxZEdBK1drTkhlV3hHNWZCekEvaE8wazZsY0YyQktrYkdhazlPc2l6cHpzTTk2WjMrdCtEYU5kWmRKR0pqdTY1ZE1ob1FYeHY4UDd3U05SMEhQazlnQVgzL0JMdkR1TU5HMzI3VDNHamlYd1E9PSIsImFsdHNlY2lkIjoiNTo6MTAwMzAwMDA4NUQzRDA1RiIsImFtciI6WyJmaWRvIiwicnNhIiwibWZhIl0sImFwcGlkIjoiMDRiMDc3OTUtOGRkYi00NjFhLWJiZWUtMDJmOWUxYmY3YjQ2IiwiYXBwaWRhY3IiOiIwIiwiZW1haWwiOiJtYWJhYmxlc0BtaWNyb3NvZnQuY29tIiwiZmFtaWx5X25hbWUiOiJCYWJsZXNod2FyIiwiZ2l2ZW5fbmFtZSI6Ik1hbm9qIiwiZ3JvdXBzIjpbIjMzNTlkN2E3LWI3MzQtNDhjMS05NzM3LTIzOGRjMDIyZWJiYyIsIjM0MDVmM2I4LWZlNjgtNDNlYS1hNDJlLTE1MDY4N2RhOTg4NSIsIjA1YTJlYzU3LTJjYjYtNGZlNC1iMWQ5LTczZjUxNWIxZDdlYiIsIjhhMzEzZTc0LTI2OTUtNDMyMi1iMmFjLTVjNmE0MGViZGMzNyIsIjU1NDIwOWMwLWM4NzYtNDdmMC1hMjJhLTExODUzYjM3M2E3ZSJdLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiMjAuMjM2LjEwLjY2IiwibmFtZSI6Ik1hbm9qIEJhYmxlc2h3YXIiLCJvaWQiOiJiMGEzODQwMS04NjNhLTRiZjAtYmUxOS05NjQ0YzFmMDc3Y2EiLCJwdWlkIjoiMTAwMzIwMDMyMzU1QkY3RiIsInJoIjoiMS5BVkVBbFNNcGY0LWd3RXl6MEtRQXNDT3cwa1pJZjNrQXV0ZFB1a1Bhd2ZqMk1CTWFBSnhSQUEuIiwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic2lkIjoiMDBiODBkNDktMzk2NS0zYmEwLTBkMWUtNWEzNTQwYjkyYTgzIiwic3ViIjoiNUR5dlBPWTBpaUdzeHZvR1B1MHZRLWRSb1BNU29VcWV1d2xBS1hSS2lEayIsInRpZCI6IjdmMjkyMzk1LWEwOGYtNGNjMC1iM2QwLWE0MDBiMDIzYjBkMiIsInVuaXF1ZV9uYW1lIjoibWFiYWJsZXNAbWljcm9zb2Z0LmNvbSIsInV0aSI6InFsSmRRdGVXMjBpOHBlalRsMWtOQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbImFjNDM0MzA3LTEyYjktNGZhMS1hNzA4LTg4YmY1OGNhYWJjMSIsIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfYWN0X2ZjdCI6IjMgNSIsInhtc19lZG92Ijp0cnVlLCJ4bXNfZnRkIjoiM0IxNzN6YXZyUi1aWThHRUlxQkk3eWRBTnFJZmNBbUZuaFFFUU9jZmR6TUJkWE5sWVhOMExXUnpiWE0iLCJ4bXNfaWRyZWwiOiIyMCAxIiwieG1zX3N1Yl9mY3QiOiIzIDEwIiwieG1zX3RjZHQiOjE3MDE4MTc3ODh9.nFkuh-1BxaIVdrpW2iicYMRjSf0y6TDuSimfw6XiO2wrL52NNaZzMz5LXO0zz9OqzfUaa0egsMdnTf70fYAegB0U3yY7GdyXFvpaqah0lMXcakgHmOc-1KFs5QGUc1sj3_P_7dDCl680EPd22RtzN0sCmDBw6UsqOQTWif-lrHFR1kYQGcHVemzu8Hhy6ffLy1te5ywChlh9RFljAMjjIHtbBjLJZvZ31u5PIISPiuiheeZLuuO7njecHOWlA2fsS-gVA2gKGloPUo-Z0Og-9wB9998O29y-uDOYAXGguWzzjSTcFyoIJrGa-uD-ULNkwmogOFKHzFOChNr9LSSSRg'
+Request body:
+{"properties": {"description": "google--gemma-4-31b-it with deployment template v1  -- azcopy upload", "properties": {"modelManifestPathOrUri": "/mabables-r-891b3cb4-b277-5dcc-ae5b-dfefc6816208/manifest.base.json"}, "tags": {"source": "huggingface", "hf_model_id": "google/gemma-4-31B-it", "framework": "transformers"}, "isAnonymous": false, "isArchived": false, "modelType": "custom_model", "modelUri": "https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b", "defaultDeploymentTemplate": {"assetId": "azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/3"}, "system_metadata": null}}
+DEBUG: urllib3.connectionpool: Starting new HTTPS connection (1): cert-eastus2.experiments.azureml.net:443
+DEBUG: urllib3.connectionpool: https://cert-eastus2.experiments.azureml.net:443 "PUT /mferp/managementfrontend/subscriptions/75703df0-38f9-4e2e-8328-45f6fc810286/resourceGroups/mabables-rg/providers/Microsoft.MachineLearningServices/registries/mabables-reg-feb26/models/google--gemma-4-31b-it/versions/1?api-version=2021-10-01-dataplanepreview HTTP/1.1" 400 883
+DEBUG: azure.core.pipeline.policies._universal: Response status: '400'
+Response headers:
+    'Date': 'Tue, 21 Apr 2026 16:07:03 GMT'
+    'Content-Type': 'application/json; charset=utf-8'
+    'Content-Length': '883'
+    'Connection': 'keep-alive'
+    'Request-Context': 'appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d'
+    'x-ms-response-type': 'error'
+    'mise-correlation-id': '7990dfb0-55f1-4a6d-98d4-4a261ad34ce0'
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    'X-Content-Type-Options': 'nosniff'
+    'azureml-served-by-cluster': 'vienna-eastus2-02'
+    'x-request-time': '0.497'
+Response content:
+{
+  "error": {
+    "code": "UserError",
+    "message": "Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b",
+    "details": [],
+    "additionalInfo": [
+      {
+        "type": "ComponentName",
+        "info": {
+          "value": "managementfrontend"
+        }
+      },
+      {
+        "type": "Correlation",
+        "info": {
+          "value": {
+            "operation": "cdcb4bb8e473ecb48b51b4ee4ed6e2e8",
+            "request": "6cd26c165506b224"
+          }
+        }
+      },
+      {
+        "type": "Environment",
+        "info": {
+          "value": "eastus2"
+        }
+      },
+      {
+        "type": "Location",
+        "info": {
+          "value": "eastus2"
+        }
+      },
+      {
+        "type": "Time",
+        "info": {
+          "value": "2026-04-21T16:07:03.1215451+00:00"
+        }
+      }
+    ]
+  }
+}
+Traceback (most recent call last):
+  File "/Users/mabables/.azure/cliextensions/ml/azext_mlv2/manual/custom/model.py", line 170, in _ml_model_update
+    updated_model = ml_client.create_or_update(model)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_ml_client.py", line 1306, in create_or_update
+    return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.13/Frameworks/Python.framework/Versions/3.13/lib/python3.13/functools.py", line 934, in wrapper
+    return dispatch(args[0].__class__)(*args, **kw)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_ml_client.py", line 1371, in _
+    return operations[AzureMLResourceType.MODEL].create_or_update(entity)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_telemetry/activity.py", line 288, in wrapper
+    return f(*args, **kwargs)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 301, in create_or_update
+    raise ex
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 289, in create_or_update
+    raise e
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 261, in create_or_update
+    self._begin_create_or_update_registry_model(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        name,
+        ^^^^^
+    ...<2 lines>...
+        cont_token,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 307, in _begin_create_or_update_registry_model
+    self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        subscription_id=self._operation_scope._subscription_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **self._scope_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^
+    ).result()
+    ^
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/core/tracing/decorator.py", line 119, in wrapper_use_tracer
+    return func(*args, **kwargs)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_restclient/model_dataplane/operations/_models_operations.py", line 940, in begin_create_or_update_model_with_system_metadata
+    raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+azure.core.exceptions.HttpResponseError: (UserError) Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Code: UserError
+Message: Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Additional Information:Type: ComponentName
+Info: {
+    "value": "managementfrontend"
+}Type: Correlation
+Info: {
+    "value": {
+        "operation": "cdcb4bb8e473ecb48b51b4ee4ed6e2e8",
+        "request": "6cd26c165506b224"
+    }
+}Type: Environment
+Info: {
+    "value": "eastus2"
+}Type: Location
+Info: {
+    "value": "eastus2"
+}Type: Time
+Info: {
+    "value": "2026-04-21T16:07:03.1215451+00:00"
+}
+ERROR: cli: None
+DEBUG: cli: Received HttpResponseError: Traceback (most recent call last):
+  File "/Users/mabables/.azure/cliextensions/ml/azext_mlv2/manual/custom/model.py", line 170, in _ml_model_update
+    updated_model = ml_client.create_or_update(model)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_ml_client.py", line 1306, in create_or_update
+    return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.13/Frameworks/Python.framework/Versions/3.13/lib/python3.13/functools.py", line 934, in wrapper
+    return dispatch(args[0].__class__)(*args, **kw)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_ml_client.py", line 1371, in _
+    return operations[AzureMLResourceType.MODEL].create_or_update(entity)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_telemetry/activity.py", line 288, in wrapper
+    return f(*args, **kwargs)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 301, in create_or_update
+    raise ex
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 289, in create_or_update
+    raise e
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 261, in create_or_update
+    self._begin_create_or_update_registry_model(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        name,
+        ^^^^^
+    ...<2 lines>...
+        cont_token,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 307, in _begin_create_or_update_registry_model
+    self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        subscription_id=self._operation_scope._subscription_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **self._scope_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^
+    ).result()
+    ^
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/core/tracing/decorator.py", line 119, in wrapper_use_tracer
+    return func(*args, **kwargs)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_restclient/model_dataplane/operations/_models_operations.py", line 940, in begin_create_or_update_model_with_system_metadata
+    raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+azure.core.exceptions.HttpResponseError: (UserError) Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Code: UserError
+Message: Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Additional Information:Type: ComponentName
+Info: {
+    "value": "managementfrontend"
+}Type: Correlation
+Info: {
+    "value": {
+        "operation": "cdcb4bb8e473ecb48b51b4ee4ed6e2e8",
+        "request": "6cd26c165506b224"
+    }
+}Type: Environment
+Info: {
+    "value": "eastus2"
+}Type: Location
+Info: {
+    "value": "eastus2"
+}Type: Time
+Info: {
+    "value": "2026-04-21T16:07:03.1215451+00:00"
+}
+
+DEBUG: cli.azure.cli.core.azclierror: Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/knack/cli.py", line 233, in invoke
+    cmd_result = self.invocation.execute(args)
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/core/commands/__init__.py", line 669, in execute
+    raise ex
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/core/commands/__init__.py", line 737, in _run_jobs_serially
+    results.append(self._run_job(expanded_arg, cmd_copy))
+                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/core/commands/__init__.py", line 706, in _run_job
+    result = cmd_copy(params)
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/core/commands/__init__.py", line 336, in __call__
+    return self.handler(*args, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/core/commands/command_operation.py", line 239, in handler
+    result = cached_put(self.cmd, setter, **setterargs)
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/core/commands/__init__.py", line 455, in cached_put
+    return _put_operation()
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/core/commands/__init__.py", line 449, in _put_operation
+    result = operation(**kwargs)
+  File "/Users/mabables/.azure/cliextensions/ml/azext_mlv2/manual/custom/model.py", line 173, in _ml_model_update
+    log_and_raise_error(err, debug)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/mabables/.azure/cliextensions/ml/azext_mlv2/manual/custom/raise_error.py", line 193, in log_and_raise_error
+    raise cli_error
+  File "/Users/mabables/.azure/cliextensions/ml/azext_mlv2/manual/custom/model.py", line 170, in _ml_model_update
+    updated_model = ml_client.create_or_update(model)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_ml_client.py", line 1306, in create_or_update
+    return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.13/Frameworks/Python.framework/Versions/3.13/lib/python3.13/functools.py", line 934, in wrapper
+    return dispatch(args[0].__class__)(*args, **kw)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_ml_client.py", line 1371, in _
+    return operations[AzureMLResourceType.MODEL].create_or_update(entity)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_telemetry/activity.py", line 288, in wrapper
+    return f(*args, **kwargs)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 301, in create_or_update
+    raise ex
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 289, in create_or_update
+    raise e
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 261, in create_or_update
+    self._begin_create_or_update_registry_model(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        name,
+        ^^^^^
+    ...<2 lines>...
+        cont_token,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/operations/_model_operations.py", line 307, in _begin_create_or_update_registry_model
+    self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        subscription_id=self._operation_scope._subscription_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **self._scope_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^
+    ).result()
+    ^
+  File "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/core/tracing/decorator.py", line 119, in wrapper_use_tracer
+    return func(*args, **kwargs)
+  File "/Users/mabables/.azure/cliextensions/ml/azure/ai/ml/_restclient/model_dataplane/operations/_models_operations.py", line 940, in begin_create_or_update_model_with_system_metadata
+    raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+azure.core.exceptions.HttpResponseError: (UserError) Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Code: UserError
+Message: Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Additional Information:Type: ComponentName
+Info: {
+    "value": "managementfrontend"
+}Type: Correlation
+Info: {
+    "value": {
+        "operation": "cdcb4bb8e473ecb48b51b4ee4ed6e2e8",
+        "request": "6cd26c165506b224"
+    }
+}Type: Environment
+Info: {
+    "value": "eastus2"
+}Type: Location
+Info: {
+    "value": "eastus2"
+}Type: Time
+Info: {
+    "value": "2026-04-21T16:07:03.1215451+00:00"
+}
+
+ERROR: cli.azure.cli.core.azclierror: (UserError) Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Code: UserError
+Message: Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Additional Information:Type: ComponentName
+Info: {
+    "value": "managementfrontend"
+}Type: Correlation
+Info: {
+    "value": {
+        "operation": "cdcb4bb8e473ecb48b51b4ee4ed6e2e8",
+        "request": "6cd26c165506b224"
+    }
+}Type: Environment
+Info: {
+    "value": "eastus2"
+}Type: Location
+Info: {
+    "value": "eastus2"
+}Type: Time
+Info: {
+    "value": "2026-04-21T16:07:03.1215451+00:00"
+}
+ERROR: az_command_data_logger: (UserError) Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Code: UserError
+Message: Invalid containerUri https://6ec5159fc0c.blob.core.windows.net/mabables-r-c0297896-e148-53ce-99fc-86ee0d15760b
+Additional Information:Type: ComponentName
+Info: {
+    "value": "managementfrontend"
+}Type: Correlation
+Info: {
+    "value": {
+        "operation": "cdcb4bb8e473ecb48b51b4ee4ed6e2e8",
+        "request": "6cd26c165506b224"
+    }
+}Type: Environment
+Info: {
+    "value": "eastus2"
+}Type: Location
+Info: {
+    "value": "eastus2"
+}Type: Time
+Info: {
+    "value": "2026-04-21T16:07:03.1215451+00:00"
+}
+DEBUG: cli.knack.cli: Event: Cli.PostExecute [<function AzCliLogging.deinit_cmd_metadata_logging at 0x106987c40>]
+INFO: az_command_data_logger: exit code: 1
+INFO: cli.__main__: Command ran in 4.930 seconds (init: 0.094, invoke: 4.835)
+INFO: telemetry.main: Begin splitting cli events and extra events, total events: 1
+INFO: telemetry.client: Accumulated 0 events. Flush the clients.
+INFO: telemetry.main: Finish splitting cli events and extra events, cli events: 1
+INFO: telemetry.save: Save telemetry record of length 4819 in cache file under /Users/mabables/.azure/telemetry/20260421090703203
+INFO: telemetry.main: Begin creating telemetry upload process.
+INFO: telemetry.process: Creating upload process: "/opt/homebrew/Cellar/azure-cli/2.83.0/libexec/bin/python /opt/homebrew/Cellar/azure-cli/2.83.0/libexec/lib/python3.13/site-packages/azure/cli/telemetry/__init__.py /Users/mabables/.azure /Users/mabables/.azure/telemetry/20260421090703203"
+INFO: telemetry.process: Return from creating process 85081
+INFO: telemetry.main: Finish creating telemetry upload process.

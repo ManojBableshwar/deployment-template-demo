@@ -8,7 +8,7 @@ default_instance_type: ${INSTANCE_TYPE_H100}
 allowed_instance_types: "Standard_NC24ads_A100_v4 Standard_NC48ads_A100_v4 Standard_NC40ads_H100_v5 Standard_NC80adis_H100_v5"
 instance_count: 1
 scoring_port: 8000
-scoring_path: /v1
+scoring_path: /
 model_mount_path: /opt/ml/model
 environment_variables:
   VLLM_TENSOR_PARALLEL_SIZE: "${VLLM_TENSOR_PARALLEL_SIZE}"

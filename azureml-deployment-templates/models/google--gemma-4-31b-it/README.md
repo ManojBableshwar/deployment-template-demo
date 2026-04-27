@@ -1,11 +1,367 @@
 # google/gemma-4-31B-it
 
 > Auto-generated status page — updated by E2E pipeline runs.
-> Last updated: 2026-04-20 10:37:43
+> Last updated: 2026-04-24 00:13:23
 
 ## Runs
 
 <details open>
+<summary><strong>2026-04-23_22-24-24</strong> — ❌ FAILED — 7/8 steps — 108m 59s</summary>
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | `2026-04-23_22-24-24` |
+| **Status** | **FAILED** |
+| **Versions** | model=7  env=7  dt=7 |
+| **SKUs** | a100 h100 |
+| **Total time** | 108m 59s |
+| **Steps** | 7/8 passed |
+| **Failed** | 7-benchmark |
+
+```bash
+azureml-deployment-templates/scripts/run-e2e-cli.sh --hf-model google/gemma-4-31B-it --version 7 --tp 1 --tp 2
+```
+
+### Pipeline Steps
+
+```
+  STEP                                      TIME  STATUS    ACTION
+  0-validate-model                          0m 01s  [PASS]    CREATED
+  1-create-environment                      1m 31s  [PASS]    CREATED
+  2-create-deployment-template              0m 24s  [PASS]    CREATED
+  3-register-model                         79m 13s  [PASS]    CREATED
+  4-create-online-endpoint                  1m 22s  [PASS]    CREATED
+    └─ tp1-a100                             1m 10s            CREATED
+    └─ tp1-h100                             1m 09s            CREATED
+    └─ tp2-a100                             1m 10s            CREATED
+    └─ tp2-h100                             1m 09s            CREATED
+  5-create-online-deployment               23m 19s  [PASS]    CREATED
+    └─ tp1-a100                            22m 25s            CREATED
+    └─ tp1-h100                            21m 12s            CREATED
+    └─ tp2-a100                            22m 54s            CREATED
+    └─ tp2-h100                            22m 21s            CREATED
+  6-test-inference                          2m 45s  [PASS]    CREATED
+    └─ tp1-a100-debug                       0m 30s            CREATED
+    └─ tp1-a100                             0m 57s            CREATED
+    └─ tp1-h100-debug                       0m 17s            CREATED
+    └─ tp1-h100                             0m 37s            CREATED
+```
+
+#### Step 0: Validate Model (PASS)
+
+<details>
+<summary>Model Artifacts</summary>
+
+**Total:** 11 files,  58G
+
+| File | Size |
+|------|------|
+| `model-00001-of-00002.safetensors` | 46G |
+| `model-00002-of-00002.safetensors` | 12G |
+| `tokenizer.json` | 31M |
+| `model.safetensors.index.json` | 117K |
+| `README.md` | 26K |
+| `chat_template.jinja` | 16K |
+| `config.json` | 4.5K |
+| `tokenizer_config.json` | 2.0K |
+| `.gitattributes` | 1.7K |
+| `processor_config.json` | 1.6K |
+| `generation_config.json` | 208B |
+
+</details>
+
+##### Model Architecture
+
+| Property | Value |
+|----------|-------|
+| **Architecture** | `Gemma4ForConditionalGeneration` |
+| **Model type** | `gemma4` |
+| **Parameters** | 32.7B (32,682,372,656) |
+| **Model size (weights)** | 58.25 GB (62,546,177,752 bytes, bfloat16) |
+| **Density** | **Dense** (no MoE) |
+| **Hidden size** | 5,376 |
+| **Intermediate (FFN) size** | 21,504 |
+| **Num layers** | 60 |
+| **Num attention heads** | 32 |
+| **Num KV heads** | 16 |
+| **Attention type** | Grouped-Query Attention (GQA, 2:1) |
+| **Head dim** | 256 |
+| **Global head dim** | 512 |
+| **Vocab size** | 262,144 |
+| **Max position embeddings** | 262,144 (256K tokens) |
+| **Activation** | `gelu_pytorch_tanh` |
+| **Tie word embeddings** | True |
+| **Sliding window** | 1,024 tokens |
+| **Vision encoder** | 27 layers, hidden=1152, heads=16, patch=16 |
+
+> **Weight size derivation:**
+>   Parameters × 2 bytes = 65,364,745,312 bytes (60.88 GB), but `tie_word_embeddings=true` means the embedding matrix (vocab × hidden = 262,144 × 5,376 = 1,409,286,144 params, 2.62 GB) is stored once on disk instead of twice (input embed + LM head). Disk size = 65,364,745,312 − 2,818,572,288 = 62,546,173,024 bytes ≈ 62,546,177,752 bytes (58.25 GB).
+
+##### Attention Mechanism
+
+The model uses a **hybrid attention** pattern across 60 layers:
+
+- **Full attention:** 10 layers — attend to all tokens in the sequence
+- **Sliding window attention:** 50 layers — attend to local window of 1024 tokens
+
+Layer pattern (S=sliding, F=full, L=linear):
+```
+   0:S  1:S  2:S  3:S  4:S  5:F  6:S  7:S  8:S  9:S
+  10:S 11:F 12:S 13:S 14:S 15:S 16:S 17:F 18:S 19:S
+  20:S 21:S 22:S 23:F 24:S 25:S 26:S 27:S 28:S 29:F
+  30:S 31:S 32:S 33:S 34:S 35:F 36:S 37:S 38:S 39:S
+  40:S 41:F 42:S 43:S 44:S 45:S 46:S 47:F 48:S 49:S
+  50:S 51:S 52:S 53:F 54:S 55:S 56:S 57:S 58:S 59:F
+```
+
+**Pattern:** Every 6th layer is full attention (layers 5, 11, 17, 23, 29, 35, 41, 47, 53, 59)
+
+##### vLLM Serving Configuration
+
+All vLLM parameters are **automatically calculated** from model architecture by `calc-vllm-config.sh`.
+Below is the exact derivation for each parameter, showing how model properties map to serving config.
+
+**Deployed values** (from `deployment-template.yml`):
+
+| Parameter | Value |
+|-----------|-------|
+| `VLLM_TENSOR_PARALLEL_SIZE` | **2** |
+| `VLLM_MAX_MODEL_LEN` | **65,536** (64K tokens) |
+| `VLLM_GPU_MEMORY_UTILIZATION` | **0.85** |
+| `VLLM_MAX_NUM_SEQS` | **20** |
+
+###### H100 (H100 80GB x 1) — `Standard_NC40ads_H100_v5`
+
+| Parameter | Value |
+|-----------|-------|
+| `VLLM_TENSOR_PARALLEL_SIZE` | **2** (user override (--tp 2)) |
+| `VLLM_MAX_MODEL_LEN` | **65,536** (64K tokens) |
+| `VLLM_GPU_MEMORY_UTILIZATION` | **0.85** |
+| `VLLM_MAX_NUM_SEQS` | **20** |
+| `BENCHMARK_CONCURRENCIES` | `[2, 4, 8, 16, 20, 30, 32]` |
+
+<details>
+<summary>Derivation math for H100</summary>
+
+**1. Tensor Parallel Size (TP)**
+
+Minimum GPUs needed so model weights fit with room for KV cache:
+```
+model_size          = 62,546,177,752 bytes = 58.25 GB
+per_gpu_vram        = 80 GB
+gpu_mem_util        = 0.9
+overhead            = 0.5 GB (CUDA context, activations)
+per_gpu_budget      = 80 * 0.9 - 0.5 = 71.50 GB
+weight_threshold    = per_gpu_budget * 0.85 = 60.77 GB
+
+  TP=1: model_per_gpu = 58.25/1 = 58.25 GB  <= 60.77 GB  -> YES <-- minimum TP
+  TP=2: model_per_gpu = 58.25/2 = 29.13 GB  <= 60.77 GB  -> YES
+
+  Minimum TP = 1 (model fits on 1 GPU(s))
+  User override: --tp 2 (spreads weights thinner, more KV cache room)
+  TP=2: model_per_gpu = 58.25/2 = 29.13 GB
+
+Result: VLLM_TENSOR_PARALLEL_SIZE = 2 (user override (--tp 2))
+```
+
+**2. GPU Memory Utilization**
+
+```
+TP > 1 -> NCCL communication buffers need headroom
+Result: VLLM_GPU_MEMORY_UTILIZATION = 0.85 (reduced from default 0.9)
+```
+
+**3. Max Model Length (context window)**
+
+Per-GPU KV cache budget determines how many tokens can be stored:
+```
+per_gpu_model       = 58.25 GB / 2 TP = 29.13 GB
+per_gpu_kv_budget   = (80 * 0.85) - 29.13 - 0.5
+                    = 68.00 - 29.13 - 0.5
+                    = 38.37 GB
+                    = 41,204,484,244 bytes
+
+KV cache per token per layer (after TP split):
+  KV heads per GPU  = max(16 / 2, 1) = 8
+  full_kv/tok/layer = 2 (K+V) * 8 heads * 256 dim * 2 bytes
+                    = 8,192 bytes
+
+Total KV per token (all 60 KV-bearing layers):
+  = 60 layers * 8192 bytes/layer
+  = 491,520 bytes/token
+
+Max tokens from KV budget:
+  max_kv_tokens     = 41,204,484,244 / 491,520 = 83,830
+  max_position_emb  = 262,144 (from config.json)
+  clamped           = min(83,830, 262,144) = 83,830
+  rounded (pow2)    = 2^floor(log2(83,830)) = 2^16 = 65,536
+
+Result: VLLM_MAX_MODEL_LEN = 65,536 (64K)
+```
+
+**4. Max Num Seqs (batch size / max concurrent requests)**
+
+How many concurrent sequences fit in KV cache at average sequence length:
+```
+  max_kv_tokens     = 83,830
+  avg_seq_len       = 4096 (default assumption)
+  batch             = 83,830 / 4096 = 20
+  clamped           = min(max(20, 1), 256) = 20
+
+Result: VLLM_MAX_NUM_SEQS = 20
+```
+
+**5. Benchmark Concurrencies**
+
+Testing range up to 2x max_num_seqs to find the saturation point:
+```
+  max_num_seqs      = 20
+  Power-of-2 series up to 2x:
+    c=2 (>= 2, included)
+    c=4 (>= 2, included)
+    c=8 (>= 2, included)
+    c=16 (>= 2, included)
+    c=32 (> max_num_seqs, stress test)
+    c=20 (= max_num_seqs, boundary)
+    c=30 (= 1.5x max_num_seqs, overload probe)
+
+Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
+```
+
+</details>
+
+###### A100 (A100 80GB x 1) — `Standard_NC24ads_A100_v4`
+
+| Parameter | Value |
+|-----------|-------|
+| `VLLM_TENSOR_PARALLEL_SIZE` | **2** (user override (--tp 2)) |
+| `VLLM_MAX_MODEL_LEN` | **65,536** (64K tokens) |
+| `VLLM_GPU_MEMORY_UTILIZATION` | **0.85** |
+| `VLLM_MAX_NUM_SEQS` | **20** |
+| `BENCHMARK_CONCURRENCIES` | `[2, 4, 8, 16, 20, 30, 32]` |
+
+<details>
+<summary>Derivation math for A100</summary>
+
+**1. Tensor Parallel Size (TP)**
+
+Minimum GPUs needed so model weights fit with room for KV cache:
+```
+model_size          = 62,546,177,752 bytes = 58.25 GB
+per_gpu_vram        = 80 GB
+gpu_mem_util        = 0.9
+overhead            = 0.5 GB (CUDA context, activations)
+per_gpu_budget      = 80 * 0.9 - 0.5 = 71.50 GB
+weight_threshold    = per_gpu_budget * 0.85 = 60.77 GB
+
+  TP=1: model_per_gpu = 58.25/1 = 58.25 GB  <= 60.77 GB  -> YES <-- minimum TP
+  TP=2: model_per_gpu = 58.25/2 = 29.13 GB  <= 60.77 GB  -> YES
+
+  Minimum TP = 1 (model fits on 1 GPU(s))
+  User override: --tp 2 (spreads weights thinner, more KV cache room)
+  TP=2: model_per_gpu = 58.25/2 = 29.13 GB
+
+Result: VLLM_TENSOR_PARALLEL_SIZE = 2 (user override (--tp 2))
+```
+
+**2. GPU Memory Utilization**
+
+```
+TP > 1 -> NCCL communication buffers need headroom
+Result: VLLM_GPU_MEMORY_UTILIZATION = 0.85 (reduced from default 0.9)
+```
+
+**3. Max Model Length (context window)**
+
+Per-GPU KV cache budget determines how many tokens can be stored:
+```
+per_gpu_model       = 58.25 GB / 2 TP = 29.13 GB
+per_gpu_kv_budget   = (80 * 0.85) - 29.13 - 0.5
+                    = 68.00 - 29.13 - 0.5
+                    = 38.37 GB
+                    = 41,204,484,244 bytes
+
+KV cache per token per layer (after TP split):
+  KV heads per GPU  = max(16 / 2, 1) = 8
+  full_kv/tok/layer = 2 (K+V) * 8 heads * 256 dim * 2 bytes
+                    = 8,192 bytes
+
+Total KV per token (all 60 KV-bearing layers):
+  = 60 layers * 8192 bytes/layer
+  = 491,520 bytes/token
+
+Max tokens from KV budget:
+  max_kv_tokens     = 41,204,484,244 / 491,520 = 83,830
+  max_position_emb  = 262,144 (from config.json)
+  clamped           = min(83,830, 262,144) = 83,830
+  rounded (pow2)    = 2^floor(log2(83,830)) = 2^16 = 65,536
+
+Result: VLLM_MAX_MODEL_LEN = 65,536 (64K)
+```
+
+**4. Max Num Seqs (batch size / max concurrent requests)**
+
+How many concurrent sequences fit in KV cache at average sequence length:
+```
+  max_kv_tokens     = 83,830
+  avg_seq_len       = 4096 (default assumption)
+  batch             = 83,830 / 4096 = 20
+  clamped           = min(max(20, 1), 256) = 20
+
+Result: VLLM_MAX_NUM_SEQS = 20
+```
+
+**5. Benchmark Concurrencies**
+
+Testing range up to 2x max_num_seqs to find the saturation point:
+```
+  max_num_seqs      = 20
+  Power-of-2 series up to 2x:
+    c=2 (>= 2, included)
+    c=4 (>= 2, included)
+    c=8 (>= 2, included)
+    c=16 (>= 2, included)
+    c=32 (> max_num_seqs, stress test)
+    c=20 (= max_num_seqs, boundary)
+    c=30 (= 1.5x max_num_seqs, overload probe)
+
+Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
+```
+
+</details>
+
+#### Step 1: Create Environment (PASS)
+
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
+
+#### Step 2: Create Deployment Template (PASS)
+
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
+
+#### Step 3: Register Model (PASS)
+
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
+
+#### Step 4: Create Online Endpoint (PASS)
+
+| SKU | Endpoint |
+|-----|----------|
+| H100 | `google--gemma-4-31b-it-h100` |
+| A100 | `google--gemma-4-31b-it-a100` |
+
+#### Step 5: Create Online Deployment (PASS)
+
+Deployment: `google--gemma-4-31b-it-vllm`
+
+#### Step 6: Test Inference (PASS)
+
+#### Step 7: Benchmark (FAIL)
+
+
+</details>
+
+
+<details>
 <summary><strong>2026-04-20_07-23-16</strong> — ❌ FAILED — 7/8 steps — 93m 19s</summary>
 
 | Field | Value |
@@ -329,26 +685,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (PASS)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (PASS)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (PASS)
 
@@ -817,26 +1164,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (PASS)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (PASS)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (PASS)
 
@@ -1298,26 +1636,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (PASS)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (PASS)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (PASS)
 
@@ -1654,26 +1983,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (PASS)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (PASS)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (PASS)
 
@@ -2000,26 +2320,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (SKIP)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (SKIP)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (SKIP)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (SKIP)
 
@@ -2346,26 +2657,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (SKIP)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (SKIP)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (SKIP)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (SKIP)
 
@@ -2795,26 +3097,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (FAIL)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (SKIP)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (SKIP)
 
@@ -3157,26 +3450,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (PASS)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (PASS)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (PASS)
 
@@ -3603,26 +3887,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (PASS)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (FAIL)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (SKIP)
 
@@ -3965,26 +4240,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (PASS)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (PASS)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (PASS)
 
@@ -4417,26 +4683,17 @@ Result: BENCHMARK_CONCURRENCIES = [2, 4, 8, 16, 20, 30, 32]
 
 </details>
 
-##### Persisted Benchmark Config
-
-From `yaml/benchmark-config.yml` (hydrated by step 2, used by step 7):
-
-| Setting | Value |
-|---------|-------|
-| Concurrencies | `[2, 4, 8, 16, 20, 30, 32]` |
-| Max num seqs | `20` |
-
 #### Step 1: Create Environment (PASS)
 
-Environment: `vllm-server` v`1` | Image: `vllm/vllm-openai:latest`
+Environment: `vllm-server` v`7` | Image: `vllm/vllm-openai:latest`
 
 #### Step 2: Create Deployment Template (PASS)
 
-Template: `vllm-google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Template: `vllm-google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 3: Register Model (PASS)
 
-Model: `google--gemma-4-31b-it` v`1` in registry `mabables-reg-feb26`
+Model: `google--gemma-4-31b-it` v`7` in registry `mabables-reg-feb26`
 
 #### Step 4: Create Online Endpoint (PASS)
 
@@ -4462,6 +4719,7 @@ Deployment: `google--gemma-4-31b-it-vllm`
 
 | Run | Status | Versions | SKUs | Duration | Steps | Failed |
 |-----|--------|----------|------|----------|-------|--------|
+| 2026-04-23_22-24-24 | FAILED | model=7  env=7  dt=7 | a100 h100 | 108m 59s | 7/8 passed | 7-benchmark |
 | 2026-04-20_07-23-16 | FAILED | model=6  env=6  dt=6 | h100 a100 | 93m 19s | 7/8 passed | 7-benchmark |
 | 2026-04-20_00-47-42 | FAILED | model=6  env=6  dt=6 | h100 a100 | 155m 57s | 7/8 passed | 7-benchmark |
 | 2026-04-20_00-06-56 | FAILED | model=6  env=6  dt=6 | h100 a100 | 37m 35s | 6/8 passed | 6-test-inference |

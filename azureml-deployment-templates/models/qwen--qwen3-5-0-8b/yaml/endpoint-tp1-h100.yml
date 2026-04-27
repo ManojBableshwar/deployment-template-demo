@@ -1,0 +1,4 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
+name: qwen--qwen3-5-0-8b-tp1-h100
+auth_mode: key
+description: "Online endpoint for Qwen/Qwen3.5-0.8B TP=1 on H100"

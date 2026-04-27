@@ -1,0 +1,1 @@
+[{"op":"add","path":"/defaultDeploymentTemplate","value":{"assetId":"azureml://registries/mabables-reg-feb26/deploymentTemplates/vllm-google--gemma-4-31b-it/versions/2"}}]

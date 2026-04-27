@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 # Step 3: Upload model via azcopy and register in the Azure ML registry
+# Uses MFE data-plane APIs for:
+#   - defaultDeploymentTemplate  (TP=1 DT, version-based ref)
+#   - allowedDeploymentTemplates (all TP DTs, label-based refs)
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/../env.sh"
@@ -11,73 +14,114 @@ err()   { printf '\033[1;31m[ERR]\033[0m   %s\n' "$*"; }
 az account set --subscription "$SUBSCRIPTION_ID"
 _step_start "Step 3: Register model"
 
+# -- Read TP list from environment --------------------------------------------
+read -ra TPS <<< "${E2E_TPS:-1}"
+
+# MFE model registry URL (data-plane)
+MFE_MODEL_URL="https://${REGISTRY_LOCATION}.api.azureml.ms/modelregistry/v1.0/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/registries/${AZUREML_REGISTRY}/models/${MODEL_NAME}:${MODEL_VERSION}"
+
+# The default DT is always TP=1 (or the first TP in the list)
+DEFAULT_TP="${TPS[0]}"
+DEFAULT_DT_NAME=$(tp_template_name "$DEFAULT_TP")
+DEFAULT_DT_REF="azureml://registries/${AZUREML_REGISTRY}/deploymentTemplates/${DEFAULT_DT_NAME}/versions/${TEMPLATE_VERSION}"
+
+# Build the allowed DTs list (label-based refs, required by MFE)
+ALLOWED_DTS_JSON="["
+for i in "${!TPS[@]}"; do
+  local_tp="${TPS[$i]}"
+  local_dt_name=$(tp_template_name "$local_tp")
+  if (( i > 0 )); then ALLOWED_DTS_JSON+=","; fi
+  ALLOWED_DTS_JSON+="{\"assetId\":\"azureml://registries/${AZUREML_REGISTRY}/deploymentTemplates/${local_dt_name}/labels/latest\"}"
+done
+ALLOWED_DTS_JSON+="]"
+
+info "Default DT (TP=${DEFAULT_TP}): $DEFAULT_DT_REF"
+info "Allowed DTs: $ALLOWED_DTS_JSON"
+
+# -- Helper: patch DTs on an existing model -----------------------------------
+patch_model_dts() {
+  local token
+  token=$(az account get-access-token --query accessToken -o tsv)
+
+  # 1. Patch defaultDeploymentTemplate (remove+add workaround for the change-existing bug)
+  info "Patching defaultDeploymentTemplate → $DEFAULT_DT_REF"
+  # Remove first (idempotent — 202 if exists, 4xx if not → ignore)
+  curl -sS -o /dev/null -w "" -X PATCH "$MFE_MODEL_URL" \
+    -H "Authorization: Bearer $token" \
+    -H "Content-Type: application/json" \
+    -d '[{"op":"remove","path":"/defaultDeploymentTemplate"}]' 2>/dev/null || true
+
+  local resp http_code
+  resp=$(curl -sS -w "\n%{http_code}" -X PATCH "$MFE_MODEL_URL" \
+    -H "Authorization: Bearer $token" \
+    -H "Content-Type: application/json" \
+    -d '[{"op":"add","path":"/defaultDeploymentTemplate","value":{"assetId":"'"$DEFAULT_DT_REF"'"}}]' 2>/dev/null)
+  http_code=$(echo "$resp" | tail -1)
+  if [[ "$http_code" == "202" || "$http_code" == "200" ]]; then
+    info "defaultDeploymentTemplate patched (HTTP $http_code)."
+  else
+    warn "defaultDeploymentTemplate PATCH returned HTTP $http_code (may not resolve Dockerfile-based env in DT)."
+    warn "Response: $(echo "$resp" | head -n -1 | head -3)"
+    warn "This is non-blocking (discoverability only). Proceeding."
+  fi
+
+  # 2. Patch allowedDeploymentTemplates (label-based refs)
+  info "Patching allowedDeploymentTemplates with ${#TPS[@]} DT(s)..."
+  resp=$(curl -sS -w "\n%{http_code}" -X PATCH "$MFE_MODEL_URL" \
+    -H "Authorization: Bearer $token" \
+    -H "Content-Type: application/json" \
+    -d '[{"op":"add","path":"/allowedDeploymentTemplates","value":'"$ALLOWED_DTS_JSON"'}]' 2>/dev/null)
+  http_code=$(echo "$resp" | tail -1)
+  if [[ "$http_code" == "202" || "$http_code" == "200" ]]; then
+    info "allowedDeploymentTemplates patched (HTTP $http_code)."
+  else
+    warn "allowedDeploymentTemplates PATCH returned HTTP $http_code."
+    warn "Response: $(echo "$resp" | head -n -1 | head -3)"
+    warn "This is non-blocking. Proceeding."
+  fi
+}
+
+# -- Helper: verify DTs on the model via MFE GET ------------------------------
+verify_model_dts() {
+  local token
+  token=$(az account get-access-token --query accessToken -o tsv)
+  local model_json
+  model_json=$(curl -sS "$MFE_MODEL_URL" \
+    -H "Authorization: Bearer $token" 2>/dev/null)
+
+  local current_default current_allowed
+  current_default=$(echo "$model_json" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('defaultDeploymentTemplate',{}).get('assetId',''))" 2>/dev/null || true)
+  current_allowed=$(echo "$model_json" | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+allowed = d.get('allowedDeploymentTemplates',[])
+for a in allowed:
+    print(a.get('assetId',''))
+" 2>/dev/null || true)
+
+  info "Verified model DTs:"
+  info "  defaultDeploymentTemplate: ${current_default:-<none>}"
+  if [[ -n "$current_allowed" ]]; then
+    while IFS= read -r adt; do
+      [[ -n "$adt" ]] && info "  allowedDeploymentTemplate: $adt"
+    done <<< "$current_allowed"
+  else
+    info "  allowedDeploymentTemplates: <none>"
+  fi
+}
+
 # -- Check if model already exists --------------------------------------------
 if az ml model show --name "$MODEL_NAME" --version "$MODEL_VERSION" \
      --registry-name "$AZUREML_REGISTRY" &>/dev/null; then
-  info "Model '$MODEL_NAME' v$MODEL_VERSION already exists in registry  -- skipping upload."
+  info "Model '$MODEL_NAME' v$MODEL_VERSION already exists in registry -- skipping upload."
 
-  # Always re-patch the deployment template reference (version may have changed)
-  info "Ensuring deployment template is set to $TEMPLATE_NAME v$TEMPLATE_VERSION..."
-  PATCH_URL="https://${REGISTRY_LOCATION}.api.azureml.ms/modelregistry/v1.0/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/registries/${AZUREML_REGISTRY}/models/${MODEL_NAME}:${MODEL_VERSION}"
-  PATCH_TOKEN=$(az account get-access-token --query accessToken -o tsv)
-  EXPECTED_DT="azureml://registries/${AZUREML_REGISTRY}/deploymentTemplates/${TEMPLATE_NAME}/versions/${TEMPLATE_VERSION}"
+  # Always re-patch DTs (versions/labels may have changed)
+  patch_model_dts
+  verify_model_dts
 
-  # Check current DT on the model
-  MODEL_JSON=$(az ml model show --name "$MODEL_NAME" --version "$MODEL_VERSION" \
-    --registry-name "$AZUREML_REGISTRY" -o json 2>/dev/null)
-  CURRENT_DT=$(echo "$MODEL_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('default_deployment_template',{}).get('asset_id',''))" 2>/dev/null || true)
-
-  if [[ "$CURRENT_DT" == "$EXPECTED_DT" ]]; then
-    info "DT on model already matches: $EXPECTED_DT -- skipping patch."
-  else
-    if [[ -n "$CURRENT_DT" ]]; then
-      warn "DT mismatch on model: current='$CURRENT_DT'  expected='$EXPECTED_DT'"
-      info "Patching deployment template to $TEMPLATE_NAME v$TEMPLATE_VERSION..."
-    else
-      info "No DT set on model. Patching to $TEMPLATE_NAME v$TEMPLATE_VERSION..."
-    fi
-    PATCH_RESP=$(curl -sS -w "\n%{http_code}" -X PATCH \
-      "$PATCH_URL" \
-      -H "Authorization: Bearer $PATCH_TOKEN" \
-      -H "Content-Type: application/json" \
-      -d '[{"op":"add","path":"/defaultDeploymentTemplate","value":{"assetId":"'"$EXPECTED_DT"'"}}]' 2>/dev/null)
-    PATCH_HTTP=$(echo "$PATCH_RESP" | tail -1)
-    if [[ "$PATCH_HTTP" == "200" ]]; then
-      info "MFE PATCH succeeded."
-    else
-      warn "MFE PATCH returned HTTP $PATCH_HTTP (MFE may not resolve Dockerfile-based envs in DT)."
-      warn "Response: $(echo "$PATCH_RESP" | head -n -1 | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('message','unknown'))" 2>/dev/null || echo "$PATCH_RESP" | head -5)"
-      warn "DT association on model is non-functional (discoverability only). Proceeding."
-    fi
-    echo  # newline after curl output
-
-    # Verify the patch took effect
-    MODEL_JSON=$(az ml model show --name "$MODEL_NAME" --version "$MODEL_VERSION" \
-      --registry-name "$AZUREML_REGISTRY" -o json 2>/dev/null)
-    VERIFY_DT=$(echo "$MODEL_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('default_deployment_template',{}).get('asset_id',''))" 2>/dev/null || true)
-    if [[ "$VERIFY_DT" == "$EXPECTED_DT" ]]; then
-      info "DT patched and verified on model."
-    else
-      warn "DT verification: model shows '$VERIFY_DT' (expected '$EXPECTED_DT')."
-      warn "MFE may not resolve Dockerfile-based env references in DT. This is non-blocking."
-    fi
-  fi
-
-  info "Showing details:"
-  echo "$MODEL_JSON"
-
-  # Validate model artifacts: check manifest property (set during azcopy upload + register)
-  MODEL_PATH=$(echo "$MODEL_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin).get('path',''))" 2>/dev/null || true)
-  if [[ -n "$MODEL_PATH" ]]; then
-    # For existing models, check 'properties' field for manifest (indicates complete upload)
-    HAS_MANIFEST=$(echo "$MODEL_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('properties',{}).get('modelManifestPathOrUri',''))" 2>/dev/null || true)
-    if [[ -n "$HAS_MANIFEST" ]]; then
-      info "Registry model validated: manifest present ($HAS_MANIFEST)."
-    else
-      warn "No modelManifestPathOrUri in model properties — upload may be incomplete."
-      warn "If deployments fail, delete and re-register the model."
-    fi
-  fi
+  info "Showing model details:"
+  az ml model show --name "$MODEL_NAME" --version "$MODEL_VERSION" \
+    --registry-name "$AZUREML_REGISTRY" -o json 2>/dev/null
 
   _step_end
   exit 0
@@ -180,36 +224,18 @@ else
   echo "$CREATE_RESP" | python3 -m json.tool 2>/dev/null || echo "$CREATE_RESP"
 fi
 
-# -- Patch: associate deployment template --------------------------------------
-info "Associating deployment template with model via PATCH..."
-EXPECTED_DT="azureml://registries/${AZUREML_REGISTRY}/deploymentTemplates/${TEMPLATE_NAME}/versions/${TEMPLATE_VERSION}"
-PATCH_URL="https://${REGISTRY_LOCATION}.api.azureml.ms/modelregistry/v1.0/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/registries/${AZUREML_REGISTRY}/models/${MODEL_NAME}:${MODEL_VERSION}"
-PATCH_TOKEN=$(az account get-access-token --query accessToken -o tsv)
-curl --fail -sS -X PATCH \
-  "$PATCH_URL" \
-  -H "Authorization: Bearer $PATCH_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '[{"op":"add","path":"/defaultDeploymentTemplate","value":{"assetId":"'"$EXPECTED_DT"'"}}]'
-echo  # newline after curl output
+# -- Patch DTs on the newly created model -------------------------------------
+patch_model_dts
 
 # -- Verify -------------------------------------------------------------------
 info "Verifying model in registry..."
-MODEL_JSON=$(az ml model show \
+az ml model show \
   --name "$MODEL_NAME" \
   --version "$MODEL_VERSION" \
   --registry-name "$AZUREML_REGISTRY" \
-  -o json)
-echo "$MODEL_JSON"
+  -o json 2>/dev/null
 
-# Verify DT was applied
-VERIFY_DT=$(echo "$MODEL_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('default_deployment_template',{}).get('asset_id',''))" 2>/dev/null || true)
-if [[ "$VERIFY_DT" != "$EXPECTED_DT" ]]; then
-  err "DT patch verification FAILED after model creation!"
-  err "  Expected: $EXPECTED_DT"
-  err "  Got:      $VERIFY_DT"
-  exit 1
-fi
-info "DT patched and verified: $EXPECTED_DT"
+verify_model_dts
 
 # List model artifacts in blob storage to confirm file/dir layout
 info "Listing model artifacts in blob storage..."
