@@ -1,0 +1,29 @@
+# Truss configuration for Qwen/Qwen3.5-0.8B text generation
+# https://truss.baseten.co/reference/config
+model_name: qwen3-5-0-8b
+model_framework: custom
+
+python_version: py311
+
+requirements:
+  - torch==2.5.1
+  - transformers>=5.0.0
+  - accelerate>=1.0.0
+  - safetensors>=0.4.4
+
+resources:
+  cpu: "4"
+  memory: 16Gi
+  use_gpu: true
+  accelerator: A100
+
+# Model weights will be either baked into the image or mounted at runtime.
+# When mounted by AzureML, AZUREML_MODEL_DIR is set automatically.
+# When baked in, weights live at /app/model-weights.
+environment_variables:
+  MODEL_WEIGHTS_PATH: "/app/model-weights"
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+
+# Truss server runs on port 8080 by default (INFERENCE_SERVER_PORT env var)
+# AzureML deployment template will reference this port.

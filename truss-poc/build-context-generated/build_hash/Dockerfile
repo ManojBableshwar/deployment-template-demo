@@ -1,0 +1,58 @@
+ARG PYVERSION=py311
+ARG HOME
+FROM baseten/truss-server-base:3.11-gpu-v0.13.0 AS truss_server
+
+ENV PYTHON_EXECUTABLE="python3"
+
+USER root
+
+ENV HOME=${HOME:-/root}
+
+ENV APP_HOME=/app
+RUN mkdir -p ${APP_HOME} /control
+
+RUN useradd -u 60000 -ms /bin/bash app
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN grep -w 'ID=debian\|ID_LIKE=debian' /etc/os-release || { echo "ERROR: Supplied base image is not a debian image"; exit 1; }
+RUN $(which python3) -c "import sys; \
+    sys.exit(0) \
+    if sys.version_info.major == 3 \
+    and sys.version_info.minor >= 9 \
+    and sys.version_info.minor <= 14 \
+    else sys.exit(1)" \
+    || { echo "ERROR: Supplied base image does not have 3.9 <= python <= 3.14"; exit 1; }
+
+RUN if [ -f /etc/apt/sources.list ]; then \
+    sed -i.bak 's|http://archive.ubuntu.com/ubuntu/|mirror://mirrors.ubuntu.com/US.txt|g' /etc/apt/sources.list; \
+fi
+RUN if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then \
+    sed -i.bak 's|http://archive.ubuntu.com/ubuntu/|mirror://mirrors.ubuntu.com/US.txt|g' /etc/apt/sources.list.d/ubuntu.sources; \
+fi
+
+RUN command -v curl >/dev/null 2>&1 || (apt update && apt install -y curl)
+
+RUN if ! command -v uv >/dev/null 2>&1; then \
+    curl -LsSf --retry 5 --retry-delay 5 https://astral.sh/uv/0.10.0/install.sh | sh && \
+    test -x ${HOME}/.local/bin/uv; \
+fi
+
+ENV PATH=${PATH}:${HOME}/.local/bin
+
+COPY --chown=root:root ./constraints.txt constraints.txt
+COPY --chown=root:root ./requirements.txt requirements.txt
+RUN UV_HTTP_TIMEOUT=${UV_HTTP_TIMEOUT:-300} uv pip install --system --break-system-packages --index-strategy unsafe-best-match --python $(which python3) -r requirements.txt -c constraints.txt --no-cache-dir
+
+WORKDIR $APP_HOME
+
+COPY --chown=root:root ./server ${APP_HOME}
+COPY --chown=root:root ./model ${APP_HOME}/model
+
+RUN mkdir -p /packages
+
+ENV INFERENCE_SERVER_PORT="8080"
+ENV SERVER_START_CMD="python3 /app/main.py"
+
+COPY --chown=0:0 ./config.yaml ${APP_HOME}/config.yaml
+ENTRYPOINT ["python3", "/app/main.py"]

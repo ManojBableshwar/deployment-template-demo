@@ -1,0 +1,41 @@
+# Managed Online Deployment YAML
+# Generated from deployment template fields.
+# ─────────────────────────────────────────────────────────────────────────────
+# Mapping from Deployment Template → Deployment YAML:
+#   DT.environment           → deployment.environment
+#   DT.default_instance_type → deployment.instance_type
+#   DT.instance_count        → deployment.instance_count
+#   DT.scoring_port          → (not in deployment YAML; set via environment)
+#   DT.scoring_path          → (not in deployment YAML; set via environment)
+#   DT.model_mount_path      → (NOT set here — causes "curated env" error)
+#   DT.environment_variables → deployment.environment_variables
+#   DT.request_settings      → deployment.request_settings
+#   DT.liveness_probe        → deployment.liveness_probe
+#   DT.readiness_probe       → deployment.readiness_probe
+# ─────────────────────────────────────────────────────────────────────────────
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: truss-qwen35-vllm
+endpoint_name: truss-qwen35-08b-a100
+model: azureml://registries/mabables-reg-feb26/models/truss-qwen35-08b/versions/1
+environment: azureml:truss-qwen35-server:12
+instance_type: Standard_NC24ads_A100_v4
+instance_count: 1
+environment_variables:
+  INFERENCE_SERVER_PORT: "5001"
+  MODEL_WEIGHTS_PATH: "/app/model-weights"
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+  PYTHONUNBUFFERED: "1"
+request_settings:
+  request_timeout_ms: 90000
+  max_concurrent_requests_per_instance: 50
+liveness_probe:
+  initial_delay: 600
+  period: 10
+  timeout: 10
+  success_threshold: 1
+readiness_probe:
+  initial_delay: 600
+  period: 10
+  timeout: 10
+  success_threshold: 1
