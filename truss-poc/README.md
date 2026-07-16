@@ -4,40 +4,25 @@ Validates whether a **Truss-packaged model** can run on an **Azure Machine Learn
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        AzureML Managed Endpoint                      │
-│                      (truss-qwen35-08b-a100)                         │
-│                                                                      │
-│  ┌────────────────────────────────────────────────────────────────┐  │
-│  │              Managed Online Deployment                          │  │
-│  │           (Standard_NC24ads_A100_v4)                            │  │
-│  │                                                                 │  │
-│  │  ┌──────────────────────────────────────────────────────────┐  │  │
-│  │  │                   Container (OCI)                         │  │  │
-│  │  │                                                           │  │  │
-│  │  │   runsvdir (/var/runit)                                   │  │  │
-│  │  │       └── truss-server service                            │  │  │
-│  │  │             └── python /app/main.py                       │  │  │
-│  │  │                   ├── GET /          (liveness)            │  │  │
-│  │  │                   ├── GET /v1/models/model (readiness)     │  │  │
-│  │  │                   ├── POST /v1/models/model:predict        │  │  │
-│  │  │                   └── POST /v1/chat/completions            │  │  │
-│  │  │                                                           │  │  │
-│  │  │   Model weights: /app/model-weights (baked-in)            │  │  │
-│  │  │              or: $AZUREML_MODEL_DIR (mounted)              │  │  │
-│  │  └──────────────────────────────────────────────────────────┘  │  │
-│  └────────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph EP["AzureML Managed Endpoint — truss-qwen35-08b-a100"]
+        subgraph DEP["Managed Online Deployment — Standard_NC24ads_A100_v4"]
+            subgraph OCI["Container (OCI image)"]
+                RUN["runsvdir /var/runit<br/>└─ truss-server service<br/>&nbsp;&nbsp;&nbsp;└─ python /app/main.py"]
+                ROUTES["Routes (port 5001)<br/>GET / — liveness<br/>GET /v1/models/model — readiness<br/>POST /v1/models/model:predict<br/>POST /v1/chat/completions (M2)"]
+                WEIGHTS["Model weights<br/>/app/model-weights (baked-in)<br/>or $AZUREML_MODEL_DIR (mounted)"]
+                RUN --> ROUTES
+                RUN --> WEIGHTS
+            end
+        end
+    end
 
-Deployment Template (Registry)          AzureML Environment (Registry)
-┌─────────────────────────┐             ┌─────────────────────────┐
-│ truss-qwen35-08b-tp1:1  │             │ truss-qwen35-server:1   │
-│ scoring_port: 8080       │────refs────▶│ Dockerfile → OCI image  │
-│ probes: /, /v1/models/.. │             │ Truss + model + weights │
-│ instance: A100           │             └─────────────────────────┘
-│ env_vars: ...            │
-└─────────────────────────┘
+    DT["Deployment Template (Registry)<br/>truss-qwen35-08b-tp1<br/>scoring_port: 5001<br/>probes: / , /v1/models/model<br/>instance: A100<br/>env_vars: INFERENCE_SERVER_PORT..."]
+    ENVR["AzureML Environment<br/>truss-qwen35-server<br/>Dockerfile → OCI image<br/>Truss server + model + weights"]
+
+    DT -->|refs| ENVR
+    ENVR -.builds.-> OCI
 ```
 
 ## Prerequisites
