@@ -166,9 +166,11 @@ readiness_probe:
 ```
 
 ### Port 5001 behavior (verification)
-The deployment template's probe port configuration (8080) was respected. The historical port 5001 issue appears to be resolved. No nginx sidecar was needed.
+AzureML managed endpoints **still probe port 5001** regardless of what is specified in the deployment YAML's probe settings. The deployment YAML schema does not support `port`, `path`, or `scheme` fields on probes — these are deployment-template-only fields.
 
-**Caveat**: The liveness probe error message "Liveness probe failed: Get ." in early attempts was caused by model loading failure (container crashed), not by port misconfiguration. Once the model loaded successfully, probes on port 8080 worked.
+**Resolution**: Set `INFERENCE_SERVER_PORT=5001` so Truss listens on the port AzureML probes. This is a one-line environment variable change.
+
+**Impact**: The Truss default port (8080) cannot be used directly. Either the server must listen on 5001, or an nginx proxy must forward 5001 → 8080 (the approach used by the vLLM deployment template).
 
 ## 10. AzureML authentication
 

@@ -38,8 +38,8 @@ Truss images **cannot be used unchanged** on AzureML managed endpoints, but the 
 
 | Metric | Value |
 |---|---|
-| Truss server port | 8080 |
-| AzureML default probe port | 5001 (configurable via deployment template) |
+| Truss server port | 5001 (overridden from default 8080 to match AzureML) |
+| AzureML probe port | 5001 (hardcoded, cannot be overridden via deployment YAML) |
 | Image build time (remote) | ~15-20 minutes |
 | Model load time (Qwen3.5-0.8B on A100) | ~5 seconds |
 | Container image size | ~8 GB (with CUDA + model weights) |
