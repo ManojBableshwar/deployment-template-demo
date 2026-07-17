@@ -20,4 +20,4 @@ model: azureml://registries/mabables-reg-feb26/models/truss-qwen35-08b/versions/
 instance_type: Standard_NC24ads_A100_v4
 instance_count: 1
 properties:
-  azureml.deploymentTemplateOverride: "azureml://registries/mabables-reg-feb26/deploymenttemplates/truss-qwen35-08b-tp1/versions/1"
+  azureml.deploymentTemplateOverride: "azureml://registries/mabables-reg-feb26/deploymenttemplates/truss-qwen35-08b-tp1/versions/2"

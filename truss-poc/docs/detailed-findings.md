@@ -231,6 +231,43 @@ AzureML managed endpoints **still probe port 5001** regardless of what is specif
 - Model mount path
 - Scaling rules
 
+## 13a. Deployment-template inheritance (the correct model)
+
+The deployment should **not** duplicate DT parameters. The correct pattern (matching the vLLM reference) is:
+
+1. **DT carries all operational params** in the registry: `environment`, `environment_variables`, `scoring_port`, `scoring_path`, `model_mount_path`, `liveness_probe`, `readiness_probe`, `request_settings`, `instance_type(s)`.
+2. **Model is tagged** with the DT as its `defaultDeploymentTemplate` (via MFE PATCH — see below).
+3. **Deployment YAML is slim** — only `name`, `endpoint_name`, `model`, `instance_type`, `instance_count`, and `properties.azureml.deploymentTemplateOverride`. Everything else is inherited.
+
+Verified: after slimming, `az ml online-deployment show` returns `environment: None`, `environment_variables: {}`, `liveness_probe: null` on the deployment object — because these are **resolved from the DT at runtime**, not stored on the deployment. The container still started on port 5001 and passed probes, proving inheritance worked.
+
+### Tagging the model with the DT (MFE PATCH)
+The CLI does not expose model→DT tagging. Use the Model Registry (MFE) data-plane API:
+```
+PATCH https://{region}.api.azureml.ms/modelregistry/v1.0/.../models/{name}:{version}
+[{"op":"remove","path":"/defaultDeploymentTemplate"}]           # idempotent
+[{"op":"add","path":"/defaultDeploymentTemplate","value":{"assetId":"<DT asset id>"}}]
+```
+Implemented in `scripts/3b-tag-model-dt.sh`.
+
+## 13b. Model must have an AOT manifest ("model feed") — CRITICAL
+
+**Symptom**: DT-based deployment fails almost immediately with:
+```
+(InvalidModelFeed) Deployment failed due to invalid model feed.
+```
+
+**Root cause**: A DT-based deployment requires the registry model to have an **AOT manifest** (`properties.modelManifestPathOrUri`). A model registered with `az ml model create` from a local path does **not** produce this manifest — its `properties` is empty `{}`. The working vLLM model has it.
+
+**Fix**: Register the model via the registry data-plane flow that produces the manifest:
+1. `POST .../models/{name}/versions/{v}/startPendingUpload` → temporary SAS + blob URI
+2. `azcopy copy` model artifacts to the SAS URI
+3. `PUT .../models/{name}/versions/{v}` with body `properties.aotManifest = "True"`
+
+After this, `properties` contains `modelManifestPathOrUri: /.../manifest.base.json` and the DT-based deployment succeeds. Implemented in `scripts/2b-register-model-manifest.sh`.
+
+**Note**: This manifest is required for **validation** of the DT deployment flow. In the baked-in-weights approach the container still loads weights from `/app/model-weights`; the uploaded artifacts satisfy the feed requirement and (with `model_mount_path`) can also serve the mounted-weights approach.
+
 ## 14. Security concerns
 
 1. **Base image trust**: `baseten/truss-server-base` is a third-party image. For production, pin digests and scan for vulnerabilities.
@@ -245,7 +282,8 @@ AzureML managed endpoints **still probe port 5001** regardless of what is specif
 |---|---|---|
 | No native runit support | Medium | Add runit in Dockerfile (3 lines) |
 | No AzureML model path awareness | Medium | Fallback logic in model.py (~15 lines) |
-| Registry Dockerfile envs fail silently | High | Use workspace environments instead |
+| Model needs AOT manifest for DT deploys | High | Register via startPendingUpload + azcopy + `aotManifest:True` (not `az ml model create`) |
+| Registry Dockerfile build reliability | Medium | Works with a correct Dockerfile; broken Dockerfiles fail silently in the registry ACR builder |
 | No Truss → DT config translator | Medium | Manual mapping or script |
 | Truss assumes Baseten deployment model | Low | All Baseten-specific code is optional |
 | No streaming support validation | Medium | Needs Milestone 2 testing |
