@@ -1,0 +1,20 @@
+# Model registration for the "mounted weights" approach.
+# ─────────────────────────────────────────────────────────────────────────────
+# Unlike the transformers sample (which bakes weights into the image), the vLLM
+# sample MOUNTS the real weights at runtime from this registered model asset.
+# vLLM is started with `--model /opt/ml/model` (the DT model_mount_path).
+#
+# NOTE: This file is for reference/diffing. The model is actually registered via
+# scripts/2b-register-model-manifest.sh (startPendingUpload + azcopy + aotManifest),
+# which produces the AOT manifest that DT-based deployment requires. A plain
+# `az ml model create` does NOT produce that manifest (→ InvalidModelFeed).
+$schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
+name: truss-vllm-qwen35
+version: "1"
+description: "Qwen/Qwen3.5-0.8B weights for Truss+vLLM PoC (mounted at runtime)"
+path: azureml://registries/mabables-reg-feb26/models/truss-vllm-qwen35/versions/1
+tags:
+  framework: truss
+  backend: vllm
+  hf_model_id: Qwen/Qwen3.5-0.8B
+  packaging: mounted-weights

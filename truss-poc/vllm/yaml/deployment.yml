@@ -1,0 +1,19 @@
+# Managed Online Deployment YAML — DT-inheritance model (vLLM backend)
+# ─────────────────────────────────────────────────────────────────────────────
+# Identical SHAPE to the transformers sample's deployment.yml — only the model
+# and deploymentTemplateOverride differ. All operational parameters
+# (environment, env_vars, scoring_port, probes, request_settings) are INHERITED
+# from the DT and must NOT be duplicated here.
+#
+# This is the key artifact to diff against ../../transformers/yaml/deployment.yml:
+# the deployment YAML is backend-agnostic — the backend lives entirely in the
+# DT + environment it points to.
+# ─────────────────────────────────────────────────────────────────────────────
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: truss-vllm-dep
+endpoint_name: truss-vllm-qwen35-a100
+model: azureml://registries/mabables-reg-feb26/models/truss-vllm-qwen35/versions/1
+instance_type: Standard_NC24ads_A100_v4
+instance_count: 1
+properties:
+  azureml.deploymentTemplateOverride: "azureml://registries/mabables-reg-feb26/deploymenttemplates/truss-vllm-qwen35-tp1/versions/1"
