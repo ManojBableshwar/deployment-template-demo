@@ -39,7 +39,21 @@ open(p, "w").write(s)
 PY
 ok "nginx will listen on 5001"
 
-# -- AzureML adaptation 2: add vllm-launch.sh + COPY it in the Dockerfile -------
+# -- AzureML adaptation 2: undo Truss's apt mirror rewrite ----------------------
+# Truss rewrites apt sources to `mirror://mirrors.ubuntu.com/US.txt`, whose
+# community mirrors return 404s / sync errors in the AzureML ACR build env and
+# fail `apt-get install nginx`. Revert to the default Ubuntu archive.
+info "Reverting Truss apt mirror rewrite (fixes 'apt-get install nginx' 404s)..."
+python3 - "$BUILD_CONTEXT/Dockerfile" <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+s = s.replace("mirror://mirrors.ubuntu.com/US.txt", "http://archive.ubuntu.com/ubuntu/")
+open(p, "w").write(s)
+PY
+ok "apt will use archive.ubuntu.com"
+
+# -- AzureML adaptation 3: add vllm-launch.sh + COPY it in the Dockerfile -------
 info "Adding vllm-launch.sh to build context and Dockerfile..."
 cp "$DOCKER_DIR/vllm-launch.sh" "$BUILD_CONTEXT/vllm-launch.sh"
 python3 - "$BUILD_CONTEXT/Dockerfile" <<'PY'
