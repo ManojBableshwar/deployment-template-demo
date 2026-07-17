@@ -86,10 +86,46 @@ alternative. This directly hits the PoC guardrail (documented, not silently swap
 | Backend | `/v1/chat/completions` |
 |---|---|
 | transformers (`TrussServer`) | needs a custom `chat_completions()` method (returns **424** here) |
-| **vLLM (`docker_server`)** | **native** — vLLM serves it; Truss nginx passes it through |
+| **vLLM (`docker_server`)** | **served by vLLM** — reachable through the Truss predict path (see §7) |
 | TRT-LLM V2 (`docker_server`/Briton) | native (`predict_endpoint: /v1/chat/completions`) — but Baseten-coupled |
 
-## 7. Deployment result
+## 7. Deployment result (verified live)
 
-_(populated after the live deployment verification — see `../logs/` and the
-top-level findings.)_
+Deployed via the DT-inheritance flow (registry env v2 + DT + tagged model + slim
+`deployment.yml`). `provisioning_state: Succeeded`.
+
+**Mounted weights — CONFIRMED (no baking).** Container log:
+```
+===== vLLM (Truss docker_server) startup =====
+AZUREML_MODEL_DIR=<not set>
+Resolved MODEL_PATH=/opt/ml/model
+Starting vLLM OpenAI server on :8000 with mounted model at /opt/ml/model
+```
+The image contains no weights; vLLM loaded them from the runtime mount at
+`/opt/ml/model` (the DT `model_mount_path`).
+
+**Inference results:**
+
+| Method | Path | HTTP | Notes |
+|---|---|---|---|
+| GET | `/` | 200 | liveness (nginx → vLLM `/health`) |
+| GET | `/v1/models/model` | 200 | readiness (nginx → vLLM `/health`) |
+| POST | `/v1/models/model:predict` | **200** | **returns an OpenAI `chat.completion`** ("…Paris…") |
+| POST | `/v1/chat/completions` | 424 | not forwarded by AzureML router |
+| POST | `/v1/completions` | 424 | not forwarded |
+| POST | `/score` | 424 | scoring_path `/` maps to `/health`, which rejects POST |
+| GET | `/v1/models` | 424 | not forwarded |
+
+**Key routing finding:** AzureML's managed-endpoint router forwards only the
+**KServe V1-style paths** — `/` (liveness), `/v1/models/model` (readiness), and
+`/v1/models/model:predict` (predict) — to the container. Arbitrary passthrough
+paths (`/v1/chat/completions`, `/v1/completions`, `/v1/models`) return **424**
+even though nginx + vLLM would serve them (the internal predict rewrite proves
+vLLM answers `/v1/chat/completions`).
+
+**Practical consequence:** on AzureML, invoke inference via
+`POST /v1/models/model:predict` with an OpenAI chat body — Truss's nginx rewrites
+it to vLLM's `/v1/chat/completions` and you get the standard OpenAI
+`chat.completion` response. The OpenAI URL itself is not exposed directly through
+AzureML's router. (Same constraint applies to the transformers sample and the
+repo's own vLLM deployment.)

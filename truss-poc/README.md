@@ -43,7 +43,7 @@ diff transformers/scripts/1-create-environment.sh   vllm/scripts/1-create-enviro
 | Base image | `nvidia/cuda:...` + Truss server | `vllm/vllm-openai:latest` |
 | Process init | runit (`runsvdir`) | supervisord (Truss-generated) |
 | Weights | **baked into image** (HF download at build) | **mounted at runtime** (`/opt/ml/model`) |
-| `/v1/chat/completions` | needs custom method (returns 424 here) | **native** (vLLM serves it) |
+| `/v1/chat/completions` | needs custom method (returns 424 here) | served by vLLM, reached via the predict path (AzureML router forwards only KServe paths) |
 | Scoring port | 5001 (Truss server) | 5001 (nginx → vLLM 8000) |
 | Predict route | `/v1/models/model:predict` (native) | `/v1/models/model:predict` → `/v1/chat/completions` |
 

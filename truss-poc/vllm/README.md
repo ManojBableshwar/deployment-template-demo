@@ -6,7 +6,10 @@ uses (`vllm/vllm-openai:latest`) — deployed through the same
 deployment-template-inheritance flow as the transformers sample.
 
 Two things this sample demonstrates that the transformers sample does not:
-1. **`/v1/chat/completions` works natively** (vLLM serves it; no custom method).
+1. **vLLM serves `/v1/chat/completions`** natively — reached on AzureML via the
+   Truss predict path `/v1/models/model:predict` (AzureML's router only forwards
+   KServe-style paths; see `docs/findings.md` §7). The response is a standard
+   OpenAI `chat.completion`.
 2. **Weights are mounted at runtime** from the AzureML model (`model_mount_path`),
    **not baked** into the image.
 
