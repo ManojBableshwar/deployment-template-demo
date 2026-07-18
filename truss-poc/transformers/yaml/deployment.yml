@@ -16,8 +16,8 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: truss-qwen35-vllm
 endpoint_name: truss-qwen35-08b-a100
-model: azureml://registries/mabables-reg-feb26/models/truss-qwen35-08b/versions/2
+model: azureml://registries/<your-registry>/models/truss-qwen35-08b/versions/2
 instance_type: Standard_NC24ads_A100_v4
 instance_count: 1
 properties:
-  azureml.deploymentTemplateOverride: "azureml://registries/mabables-reg-feb26/deploymenttemplates/truss-qwen35-08b-tp1/versions/2"
+  azureml.deploymentTemplateOverride: "azureml://registries/<your-registry>/deploymenttemplates/truss-qwen35-08b-tp1/versions/2"

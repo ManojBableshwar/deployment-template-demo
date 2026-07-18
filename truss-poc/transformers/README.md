@@ -29,7 +29,7 @@ flowchart TB
 
 - Azure CLI with `ml` extension (`az extension add -n ml`)
 - Python 3.11+ with `truss` package (`pip install truss`)
-- Access to AzureML workspace `mabables-feb2026` and registry `mabables-reg-feb26`
+- Access to an AzureML workspace and registry (set `AZUREML_WORKSPACE` / `AZUREML_REGISTRY`)
 - Model weights at `../azureml-deployment-templates/models/qwen--qwen3-5-0-8b/model-artifacts/`
 
 ## Quick Start

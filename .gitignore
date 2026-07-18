@@ -4,6 +4,9 @@
 # E2E run logs
 **/logs/
 
+# Bug-repro logs (any *logs* folder under bugs/)
+bugs/**/*logs/
+
 # Generated YAML (hydrated from .tmpl.yml)
 **/deployment-template.yml
 
@@ -19,3 +22,8 @@ __pycache__/
 *.pyc
 nohup.out
 .DS_Store
+
+# Notebook build/test artifacts (generated on the compute instance)
+**/.build-context/
+**/.model/
+**/.ipynb_checkpoints/

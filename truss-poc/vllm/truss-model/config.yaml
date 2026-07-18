@@ -7,11 +7,12 @@
 #
 # Truss generates a container that runs:
 #   - vLLM OpenAI server on `server_port` (8000)
-#   - nginx reverse proxy on 8080 (patched to 5001 for AzureML — see docker/)
+#   - nginx reverse proxy on 8080 (UNUSED on AzureML — AzureML's inference router
+#     talks directly to vLLM on :8000, the port this config declares)
 #   - supervisord managing both processes
 #
-# Weights are MOUNTED at runtime from the AzureML model (model_mount_path), NOT
-# baked into the image. The launch script resolves the mounted path.
+# Weights are MOUNTED at runtime from the AzureML model (model_mount_path=/opt/ml/model),
+# NOT baked into the image. The inline start_command below points vLLM at that mount.
 # ─────────────────────────────────────────────────────────────────────────────
 model_name: qwen3-5-0-8b-vllm
 python_version: py311
@@ -22,9 +23,11 @@ resources:
 
 # docker_server backend — wrap the vLLM OpenAI server.
 docker_server:
-  # Launch script resolves the mounted model path, then starts vLLM.
-  # (Copied into the image at /app/vllm-launch.sh by the AzureML-adapted Dockerfile.)
-  start_command: bash /app/vllm-launch.sh
+  # Inline launch (Baseten-idiomatic): the package declares its own start command
+  # here, so NOTHING extra is COPY'd into the image → Truss's generated Dockerfile
+  # is used UNMODIFIED (zero-edit). /opt/ml/model is the AzureML mount
+  # (model_mount_path in the DT); config.json sits at its root.
+  start_command: vllm serve /opt/ml/model --served-model-name model --host 0.0.0.0 --port 8000 --tensor-parallel-size 1 --gpu-memory-utilization 0.9 --max-model-len 8192 --max-num-seqs 256
   server_port: 8000
   # Truss maps these to its native routes; all other paths pass through to vLLM,
   # so /v1/chat/completions and /v1/completions work directly.

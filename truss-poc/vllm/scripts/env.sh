@@ -12,12 +12,15 @@ REPO_ROOT="$(cd "$TRUSS_POC_ROOT/.." && pwd)"     # repo root
 
 export POC_ROOT SCRIPT_DIR REPO_ROOT TRUSS_POC_ROOT
 
-# -- Azure Infrastructure (same as main project) -------------------------------
-export SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-75703df0-38f9-4e2e-8328-45f6fc810286}"
-export RESOURCE_GROUP="${RESOURCE_GROUP:-mabables-rg}"
-export AZUREML_WORKSPACE="${AZUREML_WORKSPACE:-mabables-feb2026}"
+# -- Azure Infrastructure (REDACTED for public repo) ---------------------------
+# Real IDs are NOT committed. SUBSCRIPTION_ID is auto-detected from your `az login`.
+# Set the rest via environment before running, e.g.:
+#   export RESOURCE_GROUP=... AZUREML_WORKSPACE=... AZUREML_REGISTRY=...
+export SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(az account show --query id -o tsv 2>/dev/null)}"
+export RESOURCE_GROUP="${RESOURCE_GROUP:-<your-resource-group>}"
+export AZUREML_WORKSPACE="${AZUREML_WORKSPACE:-<your-workspace>}"
 export WORKSPACE_LOCATION="${WORKSPACE_LOCATION:-eastus2}"
-export AZUREML_REGISTRY="${AZUREML_REGISTRY:-mabables-reg-feb26}"
+export AZUREML_REGISTRY="${AZUREML_REGISTRY:-<your-registry>}"
 export REGISTRY_LOCATION="${REGISTRY_LOCATION:-eastus2}"
 
 # -- Truss+vLLM PoC Resource Names (distinct from the transformers sample) ------
