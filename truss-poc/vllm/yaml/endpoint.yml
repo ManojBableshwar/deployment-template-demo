@@ -1,9 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
-name: truss-vllm-qwen35-a100
-auth_mode: key
-description: "Truss+vLLM PoC endpoint for Qwen/Qwen3.5-0.8B on A100"
-tags:
-  framework: truss
-  backend: vllm
-  model: qwen3.5-0.8b
-  poc: "true"

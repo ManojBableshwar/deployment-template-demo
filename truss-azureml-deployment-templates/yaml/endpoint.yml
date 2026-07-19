@@ -1,0 +1,5 @@
+# AzureML managed online endpoint (the front door / URL + auth).
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
+name: truss-vllm-qwen35-a100
+auth_mode: key
+description: "Truss + vLLM (Qwen3.5-0.8B)"

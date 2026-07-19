@@ -1,8 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
-name: truss-qwen35-08b-a100
-auth_mode: key
-description: "Truss PoC endpoint for Qwen/Qwen3.5-0.8B on A100"
-tags:
-  framework: truss
-  model: qwen3.5-0.8b
-  poc: "true"

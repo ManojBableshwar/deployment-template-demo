@@ -1,0 +1,7 @@
+# AzureML environment pointing at the prebuilt image (no build step).
+# Create in the workspace, then `az ml environment share` it into the registry.
+$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
+name: truss-vllm-server
+version: "1"
+image: <your-acr>.azurecr.io/truss-vllm-server:1
+description: "Truss docker_server + vLLM (Qwen3.5-0.8B)"

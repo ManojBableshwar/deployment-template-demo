@@ -9,6 +9,8 @@ bugs/**/*logs/
 
 # Generated YAML (hydrated from .tmpl.yml)
 **/deployment-template.yml
+# ...except the committed reference scaffolding
+!truss-azureml-deployment-templates/yaml/deployment-template.yml
 
 # Self-serve (separate workflow)
 self-serve/
